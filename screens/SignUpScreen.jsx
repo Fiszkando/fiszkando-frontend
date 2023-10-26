@@ -1,41 +1,17 @@
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { auth } from '../firebase';
-import { onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { useNavigation } from '@react-navigation/native';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
-const LoginScreen = () => {
+const SignUpScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  const navigation = useNavigation();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, user => {
-      if(user) {
-        navigation.replace("Home");
-      }
-    })
-
-    return unsubscribe;
-  }, [])
 
   const handleSignUp = () => {
     createUserWithEmailAndPassword(auth, email, password)
     .then(userCredentials => {
       const user = userCredentials.user;
       console.log('Registered in with email: ', user.email);
-    })
-    .catch(error => {
-      alert(error.message);
-    })
-  }
-
-  const handleLogin = () => {
-    signInWithEmailAndPassword(auth, email, password)
-    .then(userCredentials => {
-      const user = userCredentials.user;
-      console.log('Logged in with email: ', user.email);
     })
     .catch(error => {
       alert(error.message);
@@ -66,12 +42,6 @@ const LoginScreen = () => {
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          onPress={handleLogin}
-          style={styles.button}
-        >
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
           onPress={handleSignUp}
           style={[styles.button, styles.buttonOutline]}
         >
@@ -82,7 +52,7 @@ const LoginScreen = () => {
   )
 }
 
-export default LoginScreen
+export default SignUpScreen
 
 const styles = StyleSheet.create({
   container: {
