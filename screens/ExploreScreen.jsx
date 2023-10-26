@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     },
     titleText: {
       // odkomentowac potem
-      // fontFamily: 'Harlow-Solid-Italic',
+      fontFamily: 'Harlow-Solid-Italic',
       fontSize: 40,
     },
     searchBackground: {

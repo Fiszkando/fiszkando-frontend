@@ -74,7 +74,7 @@ const LoginScreen = () => {
           You don't have an account?
         </Text>
         <TouchableOpacity
-          onPress={navigation.replace('SignUp')}
+          onPress={() => {navigation.replace('SignUp')}}
           style={[
             styles.button, {
               minWidth: 120
