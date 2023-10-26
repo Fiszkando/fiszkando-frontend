@@ -1,14 +1,15 @@
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { auth } from '../firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-
+import { useNavigation } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 SplashScreen.preventAutoHideAsync();
 
 const SignUpScreen = () => {
+  const navigation = useNavigation();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,6 +29,18 @@ const SignUpScreen = () => {
   }
 
   const handleSignUp = () => {
+    if(name.length === 0 || email.length === 0 || password.length === 0 || confirmPassword.length === 0) {
+      Alert.alert('Invalid input', 'Please fill out empty fields');
+      return;
+    }
+
+    if(password !== confirmPassword) {
+      Alert.alert('Invalid password', 'Passwords don\'t match!');
+      setPassword('');
+      setConfirmPassword('');
+      return;
+    }
+
     createUserWithEmailAndPassword(auth, email, password)
     .then(userCredentials => {
       const user = userCredentials.user;
@@ -37,7 +50,7 @@ const SignUpScreen = () => {
       }).catch(err => console.log(err))
     })
     .catch(error => {
-      alert(error.message);
+      Alert.alert('Error creating account', error.message);
     })
   }
 
@@ -112,7 +125,9 @@ const SignUpScreen = () => {
             Already have an account?
           </Text>
         <TouchableOpacity
-          onPress={handleSignUp}
+          onPress={() => {
+            navigation.replace('Sign In');
+          }}
           style={styles.logInButton}
         >
           <Text style={styles.buttonOutlineText}>Log in</Text>
