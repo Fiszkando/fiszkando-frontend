@@ -4,14 +4,12 @@ import { auth } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 
-const HomeScreen = () => {
+const ExploreScreen = () => {
   const navigation = useNavigation();
 
   const handleSignOut = () => {
     signOut(auth)
-    .then(() => {
-      navigation.replace("Login")
-    })
+    .then(() => {})
     .catch(error => {
       alert(error.message);
     })
@@ -19,18 +17,12 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text>Email: {auth.currentUser?.email}</Text>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleSignOut}
-      >
-        <Text style={styles.buttonText}>Sign out</Text>
-      </TouchableOpacity>
+      <Text>Explore: </Text>
+      
     </View>
   )
 }
-
-export default HomeScreen
+export default ExploreScreen
 
 const styles = StyleSheet.create({
     container: {
