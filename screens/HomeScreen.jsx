@@ -1,16 +1,17 @@
 import { auth } from '../firebase';
 import { signOut } from 'firebase/auth';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, FlatList ,TouchableOpacity  } from 'react-native';
 
 
 const backgroundImage = require('../assets/tlo.png');
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-
+  const [showFavoriteList, setShowFavoriteList] = useState(true);
+  const [showMyList, setShowMyList] = useState(true);
   const favoriteItems = [
     { name: "QUIZ 1", description: "40 abcd questions \n 30 minutes" },
     { name: "QUIZ 2", description: "40 abcd questions \n 30 minutes" },
@@ -24,7 +25,13 @@ const HomeScreen = () => {
     { name: "QUIZ 4", description: "40 abcd questions \n 30 minutes" },
     { name: "QUIZ 5", description: "40 abcd questions \n 30 minutes" },
   ];
+  const toggleFavoriteList = () => {
+    setShowFavoriteList(!showFavoriteList);
+  };
 
+  const toggleMyList = () => {
+    setShowMyList(!showMyList);
+  };
   
   const styles = StyleSheet.create({
     container: {
@@ -34,15 +41,13 @@ const HomeScreen = () => {
     header: {
       marginTop: 50,
       backgroundColor: 'transparent',
-      borderRadius: 10,
-      padding: 0,
       textAlign: 'center',
     },
 
     titleContainer: {
-      backgroundColor: 'rgba(255, 255, 255, 0.7)',
+      backgroundColor: 'white',
       borderRadius: 40,
-      margin: 30,
+      margin: 20,
       padding: 25,
       shadowColor: '#000',
       shadowOffset: {
@@ -51,10 +56,10 @@ const HomeScreen = () => {
       },
     },
     whiteContainer: {
-      backgroundColor: 'rgba(255, 255, 255, 0.7)',
-      borderRadius: 10,
-      margin: 10,
-      padding: 20,
+      backgroundColor: 'white',
+      borderRadius: 30,
+      margin: 5,
+      padding: 25,
       shadowColor: '#000',
       shadowOffset: {
         width: 0,
@@ -67,23 +72,25 @@ const HomeScreen = () => {
     blackText: {
       color: '#000',
       fontWeight: 'bold',
+      textAlign: 'center',
       fontSize: 30,
     },
     lists: {
       flexDirection: 'column',
-      marginTop: 5,
+      
     },
     scrollableList: {
       backgroundColor: 'transparent',
       borderRadius: 10,
-      padding: 20,
+      padding: 0,
       margin: 10,
-      maxHeight: 280,
+      maxHeight: 250,
     },
     listTitle: {
-      color: '#000',
+      margin: 20,
       fontWeight: 'bold',
       fontSize: 26,
+      color: 'white'
     },
     backgroundImage: {
       position: 'absolute',
@@ -91,7 +98,7 @@ const HomeScreen = () => {
       left: 0,
       width: '100%',
       height: '100%',
-      opacity: 1.5,
+      
     },
   });
 
@@ -104,25 +111,40 @@ const HomeScreen = () => {
         </View>
       </View>
       <View style={styles.lists}>
-      
-        <ScrollView contentContainerStyle={styles.scrollableList}>
-        <Text style={styles.listTitle}>Favourite</Text>
-          {favoriteItems.map((item, index) => (
-            <View key={index} style={styles.whiteContainer}>
-              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{item.name}</Text>
-              <Text>{item.description}</Text>
-            </View>
-          ))}
-        </ScrollView>
-        <ScrollView contentContainerStyle={styles.scrollableList}>
-          <Text style={styles.listTitle}>Mine</Text>
-          {myItems.map((item, index) => (
-            <View key={index} style={styles.whiteContainer}>
-              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{item.name}</Text>
-              <Text>{item.description}</Text>
-            </View>
-          ))}
-        </ScrollView>
+        <TouchableOpacity onPress={toggleFavoriteList}>
+          <Text style={styles.listTitle}>
+            {showFavoriteList ? 'Favourite ▼' : 'Favourite ▲'}
+          </Text>
+        </TouchableOpacity>
+        {showFavoriteList && (
+          <FlatList
+            data={favoriteItems}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item, index }) => (
+              <View style={styles.whiteContainer}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#2F93BE' }}>{item.name}</Text>
+                <Text>{item.description}</Text>
+              </View>
+            )}
+          />
+        )}
+        <TouchableOpacity onPress={toggleMyList}>
+          <Text style={styles.listTitle}>
+            {showMyList ? 'Mine ▼' : 'Mine ▲'}
+          </Text>
+        </TouchableOpacity>
+        {showMyList && (
+          <FlatList
+            data={myItems}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item, index }) => (
+              <View style={styles.whiteContainer}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#2F93BE' }}>{item.name}</Text>
+                <Text>{item.description}</Text>
+              </View>
+            )}
+          />
+        )}
       </View>
     </View>
   );
