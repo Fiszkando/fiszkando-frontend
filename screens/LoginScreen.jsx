@@ -1,11 +1,13 @@
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { auth } from '../firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useNavigation } from '@react-navigation/native';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigation = useNavigation();
 
   const handleLogin = () => {
     signInWithEmailAndPassword(auth, email, password)
@@ -23,29 +25,65 @@ const LoginScreen = () => {
       style={styles.container}
       behavior='padding'
     >
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={text => setEmail(text)}
-          style={styles.input}
-        >
-        </TextInput>
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={text => setPassword(text)}
-          style={styles.input}
-          secureTextEntry
-        >
-        </TextInput>
+      <View style={styles.logo}>
+        <View style={styles.logoInset}>
+          <Text>Fiszkando</Text>
+        </View>
       </View>
-      <View style={styles.buttonContainer}>
+
+      <View style={styles.formContainer}>
+      <TextInput
+        placeholder="email"
+        value={email}
+        onChangeText={text => setEmail(text)}
+        style={styles.input}
+        placeholderTextColor='white'
+      >
+      </TextInput>
+      <TextInput
+        placeholder="password"
+        value={password}
+        onChangeText={text => setPassword(text)}
+        style={styles.input}
+        placeholderTextColor='white'
+        secureTextEntry
+      >
+      </TextInput>
+
+      <TouchableOpacity
+        onPress={handleLogin}
+        style={[styles.button, styles.butonSubmit]}
+      >
+        <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.buttonLabel}>
+          Forgot your password?
+        </Text>
+      <TouchableOpacity
+        onPress={handleLogin}
+        style={[styles.button, styles.butonSubmit]}
+      >
+        <Image style={{width: 20, height: 20}} source={require('../assets/google-logo.png')}/>
+        <Text style={styles.buttonText}>Continue with Google</Text>
+      </TouchableOpacity>
+      </View>
+
+      <View style={styles.bottomContainer}>
+        <Text style={styles.buttonLabel}>
+          You don't have an account?
+        </Text>
         <TouchableOpacity
-          onPress={handleLogin}
-          style={styles.button}
+          onPress={navigation.replace('SignUp')}
+          style={[
+            styles.button, {
+              minWidth: 120
+            }
+          ]}
         >
-          <Text style={styles.buttonText}>Login</Text>
+          <Text style={styles.buttonText}>
+            Sign up
+          </Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -54,49 +92,74 @@ const LoginScreen = () => {
 
 export default LoginScreen
 
+const blue = '#2F93BE'
+
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
+    //justifyContent: 'space-around',
     alignItems: 'center',
     flex: 1,
+    backgroundColor: blue
   },
-  inputContainer : {
-    width: '80%'
-  }, 
-  input : {
+
+  logo: {
+    marginTop: 100,
+    marginBottom: 80,
     backgroundColor: 'white',
+    borderRadius: 33,
+    width: '70%',
+  },
+  logoInset: {
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 20,
+    margin: 12,
+    padding: 20,
+    alignItems: 'center'
+  },
+
+  formContainer: {
+    flexGrow: 1,
+    width: '80%',
+    alignItems: 'center',
+  },
+  input: {
+    width: '100%',
+    backgroundColor: '#00000000',
     paddingHorizontal: 15,
     paddingVertical: 10,
-    borderRadius: 10,
-    marginTop:5,
-  }, 
-  buttonContainer : {
-    width: '60%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 40,
-  }, 
+    marginBottom: 15,
+    color: 'white',
+    borderBottomColor: 'white',
+    borderBottomWidth: 1,
+    lineHeight: 2,
+  },
   button : {
-    backgroundColor: '#9DC183',
-    width: '100%',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-  }, 
-  buttonOutline : {
     backgroundColor: 'white',
-    marginTop: 5,
-    borderColor: '#9DC183',
-    borderWidth: 1,
+    width: '100%',
+    marginBottom: 15,
+    padding: 15,
+    borderRadius: 50,
+    alignItems: 'center',
   }, 
   buttonText : {
-    color: 'white',
+    color: blue,
     fontWeight: '700',
     fontSize: 16,
   },
-  buttonOutlineText : {
-    color: '#9DC183',
-    fontWeight: '700',
-    fontSize: 16,
-  }, 
+  butonSubmit: {
+    maxWidth: '70%',
+    minWidth: 200,
+  },
+  buttonLabel: {
+    color: 'white',
+    marginBottom: 5,
+  },
+
+  bottomContainer: {
+    alignItems: 'center'
+  },
+  buttonSignUp: {
+    minWidth: 100,
+  },
 })

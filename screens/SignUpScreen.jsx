@@ -126,7 +126,7 @@ const SignUpScreen = () => {
           </Text>
         <TouchableOpacity
           onPress={() => {
-            navigation.replace('Sign In');
+            navigation.replace('SignIn');
           }}
           style={styles.logInButton}
         >
