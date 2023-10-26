@@ -2,6 +2,10 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from '../screens/HomeScreen';
+import AddNewScreen from '../screens/AddNewScreen';
+import ExploreScreen from '../screens/ExploreScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+
 
 import Feather from "react-native-vector-icons/Feather";
 
@@ -31,8 +35,36 @@ export default function UserStack() {
           }}
         />
         <Tab.Screen
-          name="Call"
-          component={HomeScreen}
+          name="Explore"
+          component={ExploreScreen}
+          options={{
+            tabBarShowLabel: false,
+            tabBarIcon: ({ focused }) => (
+              <Feather
+                name="search"
+                color={focused ? "white" : "gray"}
+                size={24}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="AddNew"
+          component={AddNewScreen}
+          options={{
+            tabBarShowLabel: false,
+            tabBarIcon: ({ focused }) => (
+              <Feather
+                name="plus-circle"
+                color={focused ? "white" : "gray"}
+                size={24}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Profile"
+          component={ProfileScreen}
           options={{
             tabBarShowLabel: false,
             tabBarIcon: ({ focused }) => (

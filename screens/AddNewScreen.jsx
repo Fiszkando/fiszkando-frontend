@@ -4,28 +4,27 @@ import { auth } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 
-const HomeScreen = () => {
-  const navigation = useNavigation();
-
-  const handleSignOut = () => {
-    signOut(auth)
-    .then(() => {})
-    .catch(error => {
-      alert(error.message);
-    })
+const AddNewScreen = () => {
+    const navigation = useNavigation();
+  
+    const handleSignOut = () => {
+      signOut(auth)
+      .then(() => {})
+      .catch(error => {
+        alert(error.message);
+      })
+    }
+  
+    return (
+      <View style={styles.container}>
+        <Text>AddNew</Text>
+        
+      </View>
+    )
   }
+  export default AddNewScreen
 
-  return (
-    <View style={styles.container}>
-      <Text>głowna</Text>
-      
-    </View>
-  )
-}
-
-export default HomeScreen
-
-const styles = StyleSheet.create({
+  const styles = StyleSheet.create({
     container: {
       flex: 1,
       justifyContent: 'center',
