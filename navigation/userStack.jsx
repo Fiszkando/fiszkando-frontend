@@ -17,7 +17,16 @@ export default function UserStack() {
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
-          tabBarStyle: { backgroundColor: "#0e1529" },
+          tabBarStyle: {  backgroundColor: "white", 
+                          shadowColor: 'black',
+                          shadowOffset: {
+                            width: 0,
+                            height: 10,
+                          },
+                          shadowOpacity: 0.5,
+                          shadowRadius: 12,
+                          elevation: 20
+          },
         }}
       >
         <Tab.Screen
@@ -28,7 +37,7 @@ export default function UserStack() {
             tabBarIcon: ({ focused }) => (
               <Feather
                 name="home"
-                color={focused ? "white" : "gray"}
+                color={focused ? "#2F93BE" : "#D9D9D9"}
                 size={24}
               />
             ),
@@ -42,7 +51,7 @@ export default function UserStack() {
             tabBarIcon: ({ focused }) => (
               <Feather
                 name="search"
-                color={focused ? "white" : "gray"}
+                color={focused ? "#2F93BE" : "#D9D9D9"}
                 size={24}
               />
             ),
@@ -56,7 +65,7 @@ export default function UserStack() {
             tabBarIcon: ({ focused }) => (
               <Feather
                 name="plus-circle"
-                color={focused ? "white" : "gray"}
+                color={focused ? "#2F93BE" : "#D9D9D9"}
                 size={24}
               />
             ),
@@ -70,7 +79,7 @@ export default function UserStack() {
             tabBarIcon: ({ focused }) => (
               <Feather
                 name="users"
-                color={focused ? "white" : "gray"}
+                color={focused ? "#2F93BE" : "#D9D9D9"}
                 size={24}
               />
             ),
