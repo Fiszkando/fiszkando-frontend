@@ -1,7 +1,7 @@
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { auth } from '../firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 
 import { useCallback } from 'react';
 import { useFonts } from 'expo-font';
@@ -9,8 +9,10 @@ import * as SplashScreen from 'expo-splash-screen';
 SplashScreen.preventAutoHideAsync();
 
 const SignUpScreen = () => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [fontsLoaded] = useFonts({
     'Harlow-Solid-Italic': require('../assets/fonts/HARLOWSI.ttf'),
   });
@@ -30,6 +32,9 @@ const SignUpScreen = () => {
     .then(userCredentials => {
       const user = userCredentials.user;
       console.log('Registered in with email: ', user.email);
+      updateProfile(user, {
+        displayName: name,
+      }).catch(err => console.log(err))
     })
     .catch(error => {
       alert(error.message);
@@ -39,29 +44,12 @@ const SignUpScreen = () => {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior='padding'
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View onLayout={onLayoutRootView}
-      style= {{
-          backgroundColor: 'white',
-          width: 240,
-          height: 90,
-          marginBottom: 30,
-          padding: 10,
-          borderRadius: 30,
-        }
-      }>
+      style= {styles.logoOutside}>
         <View
-          style= {{
-            backgroundColor: 'white',
-            height: '100%',
-            width: '100%',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderWidth: 1,
-            borderColor: '#908D8D',
-            borderRadius: 20,
-          }}>
+          style= {styles.logoInside}>
           <Text
             style= {
               {fontFamily: 'Harlow-Solid-Italic',
@@ -73,13 +61,15 @@ const SignUpScreen = () => {
       </View>
       <View style={styles.inputContainer}>
         <TextInput
+          placeholderTextColor='white'
           placeholder="Username"
-          value={email}
-          onChangeText={text => setEmail(text)}
+          value={name}
+          onChangeText={text => setName(text)}
           style={styles.input}
         >
         </TextInput>
         <TextInput
+          placeholderTextColor='white'
           placeholder="Email"
           value={email}
           onChangeText={text => setEmail(text)}
@@ -87,6 +77,7 @@ const SignUpScreen = () => {
         >
         </TextInput>
         <TextInput
+          placeholderTextColor='white'
           placeholder="Password"
           value={password}
           onChangeText={text => setPassword(text)}
@@ -95,9 +86,10 @@ const SignUpScreen = () => {
         >
         </TextInput>
         <TextInput
+          placeholderTextColor='white'
           placeholder="Repeat Password"
-          value={password}
-          onChangeText={text => setPassword(text)}
+          value={confirmPassword}
+          onChangeText={text => setConfirmPassword(text)}
           style={styles.input}
           secureTextEntry
         >
@@ -111,6 +103,21 @@ const SignUpScreen = () => {
           <Text style={styles.buttonOutlineText}>Sign up</Text>
         </TouchableOpacity>
       </View>
+      <View style={styles.loginButtonContainer}>
+          <Text
+            style= {
+              {fontSize: 14,
+               color: '#FFF'}
+            }>
+            Already have an account?
+          </Text>
+        <TouchableOpacity
+          onPress={handleSignUp}
+          style={styles.logInButton}
+        >
+          <Text style={styles.buttonOutlineText}>Log in</Text>
+        </TouchableOpacity>
+      </View>
     </KeyboardAvoidingView>
   )
 }
@@ -119,37 +126,60 @@ export default SignUpScreen
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#2F93BE',
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
   },
+  logoOutside: {
+    backgroundColor: 'white',
+    width: 240,
+    height: 90,
+    marginBottom: 30,
+    padding: 10,
+    borderRadius: 30,
+  },
+  logoInside: {
+    backgroundColor: 'white',
+    height: '100%',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#908D8D',
+    borderRadius: 20,
+  },
   inputContainer : {
-    width: '80%'
+    width: '70%'
   }, 
   input : {
-    backgroundColor: 'white',
+    color: 'white',
+    textShadowColor: 'white',
+    backgroundColor: '#2F93BE',
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,
     marginTop:5,
+    borderBottomWidth: 1,
+    borderColor: 'white',
   }, 
   buttonContainer : {
-    width: '60%',
+    width: '70%',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 40,
   }, 
   button : {
-    backgroundColor: '#9DC183',
+    backgroundColor: '#2F93BE',
     width: '100%',
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 33,
     alignItems: 'center',
   }, 
   buttonOutline : {
     backgroundColor: 'white',
     marginTop: 5,
-    borderColor: '#9DC183',
+    borderColor: '#2F93BE',
     borderWidth: 1,
   }, 
   buttonText : {
@@ -158,8 +188,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   buttonOutlineText : {
-    color: '#9DC183',
+    color: '#2F93BE',
     fontWeight: '700',
     fontSize: 16,
+  }, 
+  loginButtonContainer: {
+    alignItems: 'center',
+    width: '70%',
+    marginTop: 120,
+  },
+  logInButton : {
+    backgroundColor: '#FFF',
+    width: '65%',
+    padding: 15,
+    borderRadius: 33,
+    alignItems: 'center',
+    marginTop: 5,
   }, 
 })
