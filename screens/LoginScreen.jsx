@@ -3,11 +3,26 @@ import React, { useState, useEffect } from 'react';
 import { auth } from '../firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
+import { useCallback } from 'react';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
+  const [fontsLoaded] = useFonts({
+    'Harlow-Solid-Italic': require('../assets/fonts/HARLOWSI.ttf'),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   const handleLogin = () => {
     signInWithEmailAndPassword(auth, email, password)
@@ -27,7 +42,12 @@ const LoginScreen = () => {
     >
       <View style={styles.logo}>
         <View style={styles.logoInset}>
-          <Text>Fiszkando</Text>
+          <Text style= {{
+            fontFamily: 'Harlow-Solid-Italic',
+            fontSize: 40
+          }}>
+            Fiszkando
+          </Text>
         </View>
       </View>
 
@@ -106,16 +126,20 @@ const styles = StyleSheet.create({
     marginTop: 100,
     marginBottom: 80,
     backgroundColor: 'white',
-    borderRadius: 33,
+    borderRadius: 30,
     width: '70%',
+    height: 90,
+    padding: 10,
   },
   logoInset: {
     borderWidth: 1,
     borderColor: 'black',
     borderRadius: 20,
-    margin: 12,
-    padding: 20,
-    alignItems: 'center'
+    //margin: 12,
+    //padding: 20,
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   formContainer: {
