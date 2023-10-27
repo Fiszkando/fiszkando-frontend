@@ -5,6 +5,8 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { useCallback } from 'react';
+import * as SplashScreen from 'expo-splash-screen';
+SplashScreen.preventAutoHideAsync();
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -40,9 +42,10 @@ const LoginScreen = () => {
       style={styles.container}
       behavior='padding'
     >
-      <View style={styles.logo}>
+      <View style={styles.logo}  onLayout={onLayoutRootView}>
         <View style={styles.logoInset}>
-          <Text style= {{
+          <Text
+            style= {{
             fontFamily: 'Harlow-Solid-Italic',
             fontSize: 40
           }}>
