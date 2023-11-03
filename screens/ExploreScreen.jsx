@@ -1,7 +1,8 @@
-import { ScrollView, ImageBackground, Image, TextInput, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React from 'react';
-import { auth } from '../firebase';
+import { ScrollView, ImageBackground, Image, TextInput, StyleSheet, Text, TouchableOpacity, View, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { db, auth } from '../firebase';
 import { signOut } from 'firebase/auth';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 import {Dimensions} from 'react-native'; 
 
@@ -11,6 +12,10 @@ const searchImg = require('../assets/search.png');
 const quizIco = require('../assets/laptop.png');
 
 const ExploreScreen = () => {
+
+  const [quizzes, setQuizzes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searchText, setSearchText] = useState('');
 
   const navigation = useNavigation();
 
@@ -22,25 +27,64 @@ const ExploreScreen = () => {
     })
   }
 
-  const handleQuizStart = () => {
+  const handleStartQuiz = () => {
     //todo go to quiz start
   }
 
-  var quizzes = [];
+  const handleSearch = () => {
+    if(searchText.length == 0) {
+      setLoading(true);
+      var questionSets = collection(db, 'question-sets');
+      onSnapshot(questionSets, (snapshot) => {
+        let quizzesList = [];
+        snapshot.docs.map((doc) => quizzesList.push({...doc.data(), id: doc.id}));
+        setQuizzes(quizzesList);
+        setLoading(false);
+      })
+    }
+    else {
+      setLoading(true);
+      var questionSets = collection(db, 'question-sets');
+      onSnapshot(questionSets, (snapshot) => {
+        let quizzesList = [];
+        snapshot.docs.map((doc) => {
+          const quizData = { ...doc.data(), id: doc.id };
 
-  for(let i = 0; i < 10; i++) {
-    quizzes.push(
-      <View key = {i}>
-        <TouchableOpacity onPress={handleQuizStart} style={styles.quizBackground}>
-          <View style={styles.quizIconBackground}>
-            <Image source={quizIco} style={styles.quizIcon}></Image>
-          </View>
-          <Text style={styles.quizAuthor}>test@test.com</Text>
-          <Text style={styles.quizTitle}>Python quiz</Text>
-          <Text style={styles.quizDescription}>- 40 abcd questions{"\n"}- 30 minutes</Text>
-        </TouchableOpacity>
-      </View>
-    )
+          const quizName = quizData.name.toLowerCase();
+          const quizAuthor = quizData.authorId.toLowerCase();
+
+          if (quizName.includes(searchText.toLowerCase()) || quizAuthor.includes(searchText.toLowerCase())) {
+            quizzesList.push(quizData);
+          }
+        });
+        setQuizzes(quizzesList);
+        setLoading(false);
+      })
+    }
+  }
+
+  useEffect(() => {
+    setLoading(true);
+    var questionSets = collection(db, 'question-sets');
+    onSnapshot(questionSets, (snapshot) => {
+      let quizzesList = [];
+      snapshot.docs.map((doc) => quizzesList.push({...doc.data(), id: doc.id}));
+      setQuizzes(quizzesList);
+      setLoading(false);
+    })
+  }, [])
+  
+  const renderItem = ({item}) => {
+    return (
+      <TouchableOpacity onPress={handleStartQuiz} style={styles.quizBackground}>
+        <View style={styles.quizIconBackground}>
+          <Image source={quizIco} style={styles.quizIcon}></Image>
+        </View>
+        <Text style={styles.quizAuthor}>{ item.authorId }</Text>
+        <Text style={styles.quizTitle}>{ item.name }</Text>
+        <Text style={styles.quizDescription}>{ item.category }</Text>
+      </TouchableOpacity>
+    );
   }
 
   return (
@@ -54,15 +98,15 @@ const ExploreScreen = () => {
         </View>
 
         <View style={styles.searchBackground}>
-          <TextInput style={styles.searchText} placeholder='Search'></TextInput>
-          <TouchableOpacity style={styles.searchImage}>
+          <TextInput style={styles.searchText} value={searchText} onChangeText={text => setSearchText(text)} placeholder='Search'></TextInput>
+          <TouchableOpacity onPress={handleSearch} style={styles.searchImage}>
             <Image source={searchImg}></Image>
           </TouchableOpacity>
         </View>
 
-        <ScrollView style={styles.quizContainer}>
-            { quizzes }
-        </ScrollView>
+        <View style={styles.quizContainer}>
+            <FlatList data={quizzes} renderItem={renderItem} keyExtractor={item => item.id}/>
+        </View>
 
       </ImageBackground>
     </View>
@@ -137,6 +181,7 @@ const styles = StyleSheet.create({
     },
     quizContainer: {
       width: '100%',
+      height: 0.64 * height,
       marginTop: 0.2 * height,
     },
     quizBackground: {
@@ -179,7 +224,9 @@ const styles = StyleSheet.create({
     quizAuthor: {
       fontStyle: 'italic',
       top: -40,
-      left: 220,
+      textAlign: 'right',
+      paddingRight: '5%',
+      fontSize: 12,
     },
     quizTitle: {
       fontSize: 20,
