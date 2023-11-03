@@ -1,9 +1,11 @@
-import { ImageBackground, Image, TextInput, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, ImageBackground, Image, TextInput, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { auth } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
+import {Dimensions} from 'react-native'; 
 
+const { height, width } = Dimensions.get('window');
 const backgroundImg = require('../assets/tlo.png');
 const searchImg = require('../assets/search.png');
 const quizIco = require('../assets/laptop.png');
@@ -20,52 +22,47 @@ const ExploreScreen = () => {
     })
   }
 
+  const handleQuizStart = () => {
+    //todo go to quiz start
+  }
+
+  var quizzes = [];
+
+  for(let i = 0; i < 10; i++) {
+    quizzes.push(
+      <View key = {i}>
+        <TouchableOpacity onPress={handleQuizStart} style={styles.quizBackground}>
+          <View style={styles.quizIconBackground}>
+            <Image source={quizIco} style={styles.quizIcon}></Image>
+          </View>
+          <Text style={styles.quizAuthor}>test@test.com</Text>
+          <Text style={styles.quizTitle}>Python quiz</Text>
+          <Text style={styles.quizDescription}>- 40 abcd questions{"\n"}- 30 minutes</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
   return (
     <View style={styles.container}>
       <ImageBackground source={backgroundImg} resizeMode="cover" style={styles.image}>
+        
         <View style={styles.titleBackground}>
           <View style={styles.innerTitleBackground}>
-            <Text style={styles.titleText}>Explore</Text>
+            <Text style={styles.titleText}> Explore </Text>
           </View>
         </View>
 
         <View style={styles.searchBackground}>
           <TextInput style={styles.searchText} placeholder='Search'></TextInput>
-          <Image source={searchImg} style={styles.searchImage}></Image>
+          <TouchableOpacity style={styles.searchImage}>
+            <Image source={searchImg}></Image>
+          </TouchableOpacity>
         </View>
 
-        <View style={styles.quizContainer}>
-            <View style={styles.quizBackground}>
-              <View style={styles.quizIconBackground}>
-                <Image source={quizIco} style={styles.quizIcon}></Image>
-              </View>
-              <Text style={styles.quizAuthor}>test@test.com</Text>
-              <Text style={styles.quizTitle}>Python quiz</Text>
-              <Text style={styles.quizDescription}>- 40 abcd questions{"\n"}- 30 minutes</Text>
-            </View>
-            
-            <Text>{"\n"}{"\n"}</Text>
-
-            <View style={styles.quizBackground}>
-              <View style={styles.quizIconBackground}>
-                <Image source={quizIco} style={styles.quizIcon}></Image>
-              </View>
-              <Text style={styles.quizAuthor}>test@test.com</Text>
-              <Text style={styles.quizTitle}>Python quiz</Text>
-              <Text style={styles.quizDescription}>- 40 abcd questions{"\n"}- 30 minutes</Text>
-            </View>
-            
-            <Text>{"\n"}{"\n"}</Text>
-
-            <View style={styles.quizBackground}>
-              <View style={styles.quizIconBackground}>
-                <Image source={quizIco} style={styles.quizIcon}></Image>
-              </View>
-              <Text style={styles.quizAuthor}>test@test.com</Text>
-              <Text style={styles.quizTitle}>Python quiz</Text>
-              <Text style={styles.quizDescription}>- 40 abcd questions{"\n"}- 30 minutes</Text>
-            </View>
-        </View>
+        <ScrollView style={styles.quizContainer}>
+            { quizzes }
+        </ScrollView>
 
       </ImageBackground>
     </View>
@@ -79,16 +76,17 @@ const styles = StyleSheet.create({
     },
     image: {
       flex: 1,
+      height: height,
     },
     titleBackground: {
       width: '80%',
-      height: '10%',
+      height: 0.1 * height,
+      top: 0.12 * height,
+      marginHorizontal: '10%',
       backgroundColor: 'white',
       borderRadius: 30,
       justifyContent: 'center',
       alignItems: 'center',
-      top: '15%',
-      left: '10%',
       shadowColor: 'black',
       shadowOffset: {
         width: 0,
@@ -108,17 +106,16 @@ const styles = StyleSheet.create({
       alignItems: 'center',
     },
     titleText: {
-      // odkomentowac potem
       fontFamily: 'Harlow-Solid-Italic',
       fontSize: 40,
     },
     searchBackground: {
       width: '80%',
-      height: '6%',
+      height: 0.06 * height,
+      top: 0.18 * height,
+      marginHorizontal: '10%',
       backgroundColor: 'white',
       borderRadius: 20,
-      top: '40%',
-      left: '5%',
       flexDirection: 'row',
       justifyContent: 'space-between',
       shadowColor: 'black',
@@ -140,16 +137,16 @@ const styles = StyleSheet.create({
     },
     quizContainer: {
       width: '100%',
-      height: '100%',
-      top: '20%',
+      marginTop: 0.2 * height,
     },
     quizBackground: {
       width: '80%',
-      height: '18%',
+      height: 0.18 * height,
       backgroundColor: 'white',
       borderRadius: 20,
-      top: '8%',
+      top: 0.04 * height,
       left: '10%',
+      marginBottom: 0.06 * height,
       shadowColor: 'black',
       shadowOffset: {
         width: 0,
@@ -157,7 +154,7 @@ const styles = StyleSheet.create({
       },
       shadowOpacity: 0.5,
       shadowRadius: 12,
-      elevation: 20,
+      elevation: 12,
     },
     quizIconBackground: {
       width: '16%',
