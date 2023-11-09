@@ -8,20 +8,15 @@ import {
   View,
   Image,
   KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { Dimensions } from "react-native";
-import {
-  getAuth,
-  updatePassword,
-  reauthenticateWithCredential,
-  updateProfile,
-  deleteUser,
-} from "firebase/auth";
+import { updatePassword, updateProfile, deleteUser } from "firebase/auth";
 
-const { height, width } = Dimensions.get("window");
+const { height } = Dimensions.get("window");
 const backgroundImg = require("../assets/tlo.png");
 const saveIcon = require("../assets/diskette.png");
 const deleteIcon = require("../assets/bin.png");
@@ -43,47 +38,63 @@ const ProfileScreen = () => {
     signOut(auth)
       .then(() => {})
       .catch((error) => {
-        alert(error.message);
-      });
-  };
-
-  const handleUpdatePassword = () => {
-    // todo:
-    updatePassword(auth.currentUser, newPassword)
-      .then(() => {
-        // Update successful.
-      })
-      .catch((error) => {
-        // An error ocurred
-        // ...
+        Alert.alert(error.message);
       });
   };
 
   const handleUpdateDisplayName = () => {
     if (newUsername.length < 1) {
-      alert("Enter valid username");
+      Alert.alert("Enter valid username");
     }
 
     updateProfile(auth.currentUser, {
       displayName: newUsername,
     })
       .then(() => {
-        alert("Username updated.");
+        Alert.alert("Username updated.");
         setUsername(newUsername);
       })
       .catch((error) => {
-        alert("An error occured while changing username");
+        Alert.alert("An error occured while changing username");
+      });
+  };
+
+  const handleUpdatePassword = () => {
+    if (newPassword.length === 0 || confirmNewPassword.length === 0) {
+      Alert.alert("Invalid input", "Please fill out empty fields");
+      return;
+    }
+
+    if (newPassword !== confirmNewPassword) {
+      Alert.alert("Invalid password", "Passwords don't match!");
+      setNewPassword("");
+      setConfirmNewPassword("");
+      return;
+    }
+
+    updatePassword(auth.currentUser, newPassword)
+      .then(() => {
+        setNewPassword("");
+        setConfirmNewPassword("");
+        Alert.alert("Pasword updated successfully");
+      })
+      .catch((error) => {
+        //if error === specific (time logged in too long, user get alerted to re-login - log him/her out, in the future use reauthenticateWithCredential)
+        //read https://firebase.google.com/docs/auth/web/manage-users?hl=pl#re-authenticate_a_user
+        Alert.alert("An error occured while changing password");
       });
   };
 
   const handleDeleteProfile = () => {
+    //add some kind of prompt saying "do you really want to do it???"
     deleteUser(auth.currentUser)
       .then(() => {
-        // User deleted.
+        // User deleted. TODO: check if authguard works (user get signed out automatically)...
       })
       .catch((error) => {
-        // An error ocurred
-        // ...
+        //if error === specific (time logged in too long, user get alerted to re-login - log him/her out, in the future use reauthenticateWithCredential)
+        //read https://firebase.google.com/docs/auth/web/manage-users?hl=pl#delete_a_user
+        Alert.alert("An error occured while deleting user");
       });
   };
 
@@ -127,6 +138,7 @@ const ProfileScreen = () => {
                       value={newPassword}
                       onChangeText={(text) => setNewPassword(text)}
                       style={styles.input}
+                      secureTextEntry
                     ></TextInput>
                     <TextInput
                       placeholderTextColor="white"
@@ -134,13 +146,14 @@ const ProfileScreen = () => {
                       value={confirmNewPassword}
                       onChangeText={(text) => setConfirmNewPassword(text)}
                       style={styles.input}
+                      secureTextEntry
                     ></TextInput>
                   </View>
                 </View>
               </View>
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
-                  onPress={() => {}}
+                  onPress={handleUpdatePassword}
                   style={[styles.button, styles.buttonOutline]}
                 >
                   <Text style={styles.buttonText}>Change password</Text>
