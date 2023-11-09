@@ -1,5 +1,5 @@
 import { db, auth } from '../firebase';
-import { collection, onSnapshot, query, where, getDocs } from 'firebase/firestore';
+import { collection, onSnapshot, query, where, getDoc, doc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 
 import React, { useState, useEffect } from 'react';
@@ -15,14 +15,15 @@ const keyIco = require('../assets/key.png');
 
 const HomeScreen = () => {
   const userEmail = auth.currentUser?.email;
-  const userName = userEmail ? userEmail.substring(0, userEmail.indexOf('@')): '';
+  const userName = userEmail ? userEmail.substring(0, userEmail.indexOf('@')) : '';
   const userID = auth.currentUser.uid;
   const navigation = useNavigation();
-  const [quizzes, setQuizzes] = useState([]);
+  const [myQuizzes, setMyQuizzes] = useState([]);
+  const [myFavoriteQuizzes, setmyFavoriteMyQuizzes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showFavoriteList, setShowFavoriteList] = useState(true);
   const [showMyList, setShowMyList] = useState(true);
-  
+
   const toggleFavoriteList = () => {
     setShowFavoriteList(!showFavoriteList);
   };
@@ -35,13 +36,39 @@ const HomeScreen = () => {
   }
   useEffect(() => {
     setLoading(true);
-    var questionSets = query(collection(db, 'question-sets'), where('authorId', '==', userID));
-    onSnapshot(questionSets, (snapshot) => {
-      let quizzesList = [];
-      snapshot.docs.map((doc) => quizzesList.push({ ...doc.data(), id: doc.id }));
-      setQuizzes(quizzesList);
-      setLoading(false);
+    var myQuestionSets = query(collection(db, 'question-sets'), where('authorId', '==', userID));
+
+    onSnapshot(myQuestionSets, (snapshot) => {
+      let myQuizzesList = [];
+      snapshot.docs.map((doc) => myQuizzesList.push({ ...doc.data(), id: doc.id }));
+      setMyQuizzes(myQuizzesList);
+
     })
+
+    const favSetsQuery = query(collection(db, 'favorite-sets'), where('userId', '==', userID));
+
+    const favSetsSnapshot = onSnapshot(favSetsQuery, async (snapshot) => {
+      const favSetsDocs = snapshot.docs;
+
+      const favSetsIds = favSetsDocs.map((doc) => doc.data().setId);
+
+
+      const favQuizzesList = [];
+      for (const setId of favSetsIds) {
+        const docRef = doc(db, 'question-sets', setId);
+        
+        const docSnap = await getDoc(docRef);
+        console.log(docSnap);
+        if (docSnap.exists()) {
+          
+          favQuizzesList.push({ ...docSnap.data(), id: docSnap.id });
+        }
+      }
+
+      setmyFavoriteMyQuizzes(favQuizzesList);
+    });
+
+    setLoading(false);
   }, [])
 
   const renderItem = ({ item }) => {
@@ -60,29 +87,29 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <ImageBackground source={backgroundImg} resizeMode="cover" style={styles.image}>
-     
-      <View style={styles.mainTitleBackground}>
-        <Text style={styles.helloText}>Hello! </Text>
-        <View style={styles.titleBackground}>
-          <View style={styles.innerTitleBackground}>
-            <Text style={styles.titleText}> {userName} </Text>
+
+        <View style={styles.mainTitleBackground}>
+          <Text style={styles.helloText}>Hello! </Text>
+          <View style={styles.titleBackground}>
+            <View style={styles.innerTitleBackground}>
+              <Text style={styles.titleText}> {userName} </Text>
+            </View>
           </View>
         </View>
-      </View>
 
         <View style={styles.mainQuizContainer}>
           <TouchableOpacity onPress={toggleFavoriteList}>
             <View style={styles.listNameContainer}>
               <Image source={starIco} style={styles.starIcon}></Image>
               <Text style={styles.listNameText}>
-                {showFavoriteList ? 'Favourite ▼' : 'Favourite ▲'}
+                {showFavoriteList ? 'Favorite ▼' : 'Favorite ▲'}
               </Text>
             </View>
           </TouchableOpacity>
 
           {showFavoriteList && (
             <View style={styles.quizContainer}>
-              <FlatList data={quizzes} renderItem={renderItem} keyExtractor={item => item.id} />
+              <FlatList data={myFavoriteQuizzes} renderItem={renderItem} keyExtractor={item => item.id} />
             </View>)}
 
           <TouchableOpacity onPress={toggleMyList}>
@@ -96,7 +123,7 @@ const HomeScreen = () => {
 
           {showMyList && (
             <View style={styles.quizContainer}>
-              <FlatList data={quizzes} renderItem={renderItem} keyExtractor={item => item.id} />
+              <FlatList data={myQuizzes} renderItem={renderItem} keyExtractor={item => item.id} />
             </View>)}
 
         </View>
@@ -115,14 +142,14 @@ const styles = StyleSheet.create({
     flex: 1,
     height: height,
   },
-  mainTitleBackground:{
+  mainTitleBackground: {
     height: 0.1 * height,
     top: 0.12 * height,
     justifyContent: 'center',
   },
   titleBackground: {
     width: '80%',
-    
+
     marginHorizontal: '10%',
     backgroundColor: 'white',
     borderRadius: 30,
@@ -146,7 +173,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  helloText:{
+  helloText: {
     fontSize: 25,
     fontWeight: 'bold',
     marginLeft: 0.1 * width,
@@ -157,8 +184,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Harlow-Solid-Italic',
     fontSize: 40,
   },
-  listNameContainer:{
-    flexDirection: 'row', 
+  listNameContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 0.05 * width,
     marginTop: 0.05 * height,
