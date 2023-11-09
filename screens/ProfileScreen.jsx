@@ -85,10 +85,11 @@ const ProfileScreen = () => {
       });
   };
 
-  const handleDeleteProfile = () => {
+  const handleDeleteUser = () => {
     //add some kind of prompt saying "do you really want to do it???"
     deleteUser(auth.currentUser)
       .then(() => {
+        Alert.alert("User deleted.");
         // User deleted. TODO: check if authguard works (user get signed out automatically)...
       })
       .catch((error) => {
@@ -214,7 +215,7 @@ const ProfileScreen = () => {
               </View>
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
-                  onPress={() => {}}
+                  onPress={handleDeleteUser}
                   style={[styles.button, styles.buttonOutline]}
                 >
                   <Text style={styles.buttonText}>Delete account</Text>
