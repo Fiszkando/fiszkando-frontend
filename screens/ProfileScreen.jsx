@@ -38,6 +38,7 @@ const ProfileScreen = () => {
                     <View style={styles.cardIconBackground}>
                       <Image source={saveIcon}></Image>
                     </View>
+                    <Text style={styles.cardTitle}>Change password</Text>
                     <View style={styles.inputGroup}>
                       <TextInput
                         placeholderTextColor='white'
@@ -67,6 +68,7 @@ const ProfileScreen = () => {
                     <View style={styles.cardIconBackground}>
                       <Image source={saveIcon}></Image>
                     </View>
+                    <Text style={styles.cardTitle}>Change username</Text>
                     <View style={styles.inputGroup}>
                       <TextInput
                         placeholderTextColor='white'
@@ -91,9 +93,30 @@ const ProfileScreen = () => {
                 </View>
               </View>
               <View style={{width: '100%', alignItems: 'center'}}>
+                <View style={styles.cardContainer}>
+                  <View style={styles.cardBackground}>
+                    <View style={[styles.cardIconBackground, {height: '32%'}]}>
+                      <Image source={deleteIcon}></Image>
+                    </View>
+                    <Text style={styles.cardTitle}>Delete account</Text>
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.cardText}>Warning! Make sure you really want to delete your account. This operation cannot be undone!</Text>
+                    </View>
+                  </View>
+                </View>
                 <View style={styles.buttonContainer}>
                   <TouchableOpacity
                     onPress={() => {}}
+                    style={[styles.button, styles.buttonOutline]}
+                  >
+                    <Text style={styles.buttonText}>Delete account</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={{width: '100%', alignItems: 'center'}}>
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    onPress={handleSignOut}
                     style={[styles.button, styles.buttonOutline, {marginTop: 30}]}
                   >
                     <Text style={styles.buttonText}>Log out</Text>
@@ -117,17 +140,20 @@ const ProfileScreen = () => {
       height: height,
     },
     input: {
+      width: '80%',
       color: 'white',
       textShadowColor: 'white',
-      backgroundColor: 'green',
+      backgroundColor: '#2F93BE',
       paddingHorizontal: 15,
       paddingVertical: 10,
       borderRadius: 10,
+      marginTop:5,
       borderBottomWidth: 1,
       borderColor: 'white',
     }, 
     inputGroup: {
       gap: 5,
+      alignItems: 'center',
     },
     titleBackground: {
       width: '80%',
@@ -172,10 +198,11 @@ const ProfileScreen = () => {
       gap: 20,
       // backgroundColor: 'red',
       alignItems: 'center',
+      paddingBottom: 20,
     },
     cardContainer: {
       width: '100%',
-      height: 0.26 * height,
+      height: 0.32 * height,
       alignItems: 'center',
     },
     cardBackground: {
@@ -193,8 +220,8 @@ const ProfileScreen = () => {
       elevation: 12,
     },
     cardIconBackground: {
-      width: '16%',
-      height: '34%',
+      width: '18%',
+      height: '28%',
       backgroundColor: 'white',
       borderRadius: 100,
       top: '-12%',
@@ -209,6 +236,18 @@ const ProfileScreen = () => {
       shadowOpacity: 0.5,
       shadowRadius: 12,
       elevation: 20,
+    },
+    cardTitle: {
+      fontSize: 20,
+      color: '#2F93BE',
+      fontWeight: 'bold',
+      top: -10,
+      left: 35,
+    },
+    cardText: {
+      color: 'black',
+      paddingHorizontal: 30,
+      marginBottom: 10,
     },
     buttonContainer: {
       alignItems: 'center',
