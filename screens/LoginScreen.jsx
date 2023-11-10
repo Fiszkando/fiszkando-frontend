@@ -1,11 +1,11 @@
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { auth } from '../firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { useCallback } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
+import auth from '@react-native-firebase/auth';
+
 SplashScreen.preventAutoHideAsync();
 
 const LoginScreen = () => {
@@ -27,7 +27,7 @@ const LoginScreen = () => {
   }
 
   const handleLogin = () => {
-    signInWithEmailAndPassword(auth, email, password)
+    auth().signInWithEmailAndPassword(email, password)
     .then(userCredentials => {
       const user = userCredentials.user;
       console.log('Logged in with email: ', user.email);
@@ -35,6 +35,10 @@ const LoginScreen = () => {
     .catch(error => {
       alert(error.message);
     })
+  }
+
+  const handleGoogleLogin = () => {
+    alert('not implemented!');
   }
 
   return (
@@ -84,7 +88,7 @@ const LoginScreen = () => {
           Forgot your password?
         </Text>
       <TouchableOpacity
-        onPress={handleLogin}
+        onPress={handleGoogleLogin}
         style={[styles.button, styles.butonSubmit]}
       >
         <Image style={{width: 20, height: 20}} source={require('../assets/google-logo.png')}/>

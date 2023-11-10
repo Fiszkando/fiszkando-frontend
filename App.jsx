@@ -1,16 +1,32 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoginScreen from './screens/LoginScreen';
-import HomeScreen from './screens/HomeScreen';
-import RootNavigation from './navigation';
+import AuthStack from './navigation/AuthStack';
+import UserStack from './navigation/UserStack';
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+function App() {
+  // Set an initializing state whilst Firebase connects
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState();
+
+  function onAuthStateChanged(user) {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  }
+
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; 
+  }, []);
+
+  if (initializing) return null;
+
+  if (!user) {
+    <AuthStack></AuthStack>
+  }
   return (
-    <RootNavigation />
+    <UserStack></UserStack>
   );
 }
 

@@ -13,7 +13,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
-import { Dimensions } from "react-native";
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { updatePassword, updateProfile, deleteUser } from "firebase/auth";
 import TitleBanner from "../components/TitleBanner";
 
@@ -21,6 +21,9 @@ const { height } = Dimensions.get("window");
 const backgroundImg = require("../assets/tlo.png");
 const saveIcon = require("../assets/diskette.png");
 const deleteIcon = require("../assets/bin.png");
+
+
+
 
 const ProfileScreen = () => {
   const [username, setUsername] = useState("");
