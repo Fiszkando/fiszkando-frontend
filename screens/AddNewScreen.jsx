@@ -15,8 +15,11 @@ import { Dimensions } from "react-native";
 
 const { height } = Dimensions.get("window");
 const backgroundImg = require("../assets/tlo.png");
+const plusIcon = require("../assets/plus.png");
+const folderIcon = require("../assets/folder.png");
 
 const ProfileScreen = () => {
+  const [questionSetTitle, setQuestionSetTitle] = useState("");
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -28,11 +31,84 @@ const ProfileScreen = () => {
         resizeMode="cover"
         style={styles.image}
       >
+        <TouchableOpacity
+          onPress={() => {}}
+          style={[
+            styles.button,
+            styles.buttonOutline,
+            { position: "absolute", top: 10, left: 10, borderWidth: 0 },
+          ]}
+        >
+          <Text style={styles.buttonText}>Discard</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {}}
+          style={[
+            styles.button,
+            styles.buttonOutline,
+            { position: "absolute", top: 10, right: 10, borderWidth: 0 },
+          ]}
+        >
+          <Text style={styles.buttonText}>Save</Text>
+        </TouchableOpacity>
         <View style={styles.titleBackground}>
           <View style={styles.innerTitleBackground}>
-            <TextInput style={styles.titleText} placeholder="Name"></TextInput>
+            <TextInput
+              style={styles.titleText}
+              placeholder="Name"
+              value={questionSetTitle}
+              onChangeText={setQuestionSetTitle}
+            ></TextInput>
           </View>
         </View>
+        <TouchableOpacity
+          onPress={() => {}}
+          style={[
+            styles.button,
+            styles.buttonOutline,
+            {
+              position: "absolute",
+              bottom: 20,
+              left: 20,
+              borderWidth: 0,
+              width: "auto",
+              shadowColor: "black",
+              shadowOffset: {
+                width: 0,
+                height: 10,
+              },
+              shadowOpacity: 0.5,
+              shadowRadius: 12,
+              elevation: 20,
+            },
+          ]}
+        >
+          <Image source={folderIcon}></Image>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {}}
+          style={[
+            styles.button,
+            styles.buttonOutline,
+            {
+              position: "absolute",
+              bottom: 20,
+              right: 20,
+              borderWidth: 0,
+              width: "auto",
+              shadowColor: "black",
+              shadowOffset: {
+                width: 0,
+                height: 10,
+              },
+              shadowOpacity: 0.5,
+              shadowRadius: 12,
+              elevation: 20,
+            },
+          ]}
+        >
+          <Image source={plusIcon}></Image>
+        </TouchableOpacity>
       </ImageBackground>
     </KeyboardAvoidingView>
   );
@@ -93,5 +169,23 @@ const styles = StyleSheet.create({
   titleText: {
     fontFamily: "Harlow-Solid-Italic",
     fontSize: 40,
+  },
+  button: {
+    backgroundColor: "#2F93BE",
+    width: "30%",
+    padding: 15,
+    borderRadius: 33,
+    alignItems: "center",
+  },
+  buttonOutline: {
+    backgroundColor: "white",
+    marginTop: 5,
+    borderColor: "#2F93BE",
+    borderWidth: 1,
+  },
+  buttonText: {
+    color: "black",
+    fontWeight: "700",
+    fontSize: 16,
   },
 });
