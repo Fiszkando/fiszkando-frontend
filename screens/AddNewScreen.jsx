@@ -9,6 +9,8 @@ import {
   Image,
   KeyboardAvoidingView,
   Alert,
+  Modal,
+  Pressable,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Dimensions } from "react-native";
@@ -20,96 +22,129 @@ const folderIcon = require("../assets/folder.png");
 
 const ProfileScreen = () => {
   const [questionSetTitle, setQuestionSetTitle] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      {/* TODO: think about changing to SafeAreaView as the general container (adds padding for devices with notch) */}
-      <ImageBackground
-        source={backgroundImg}
-        resizeMode="cover"
-        style={styles.image}
-      >
-        <TouchableOpacity
-          onPress={() => {}}
-          style={[
-            styles.button,
-            styles.buttonOutline,
-            { position: "absolute", top: 10, left: 10, borderWidth: 0 },
-          ]}
+      <View style={{ opacity: modalVisible ? 0.5 : 1 }} o>
+        {/* TODO: think about changing to SafeAreaView as the general container (adds padding for devices with notch) */}
+        <ImageBackground
+          source={backgroundImg}
+          resizeMode="cover"
+          style={styles.image}
         >
-          <Text style={styles.buttonText}>Discard</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {}}
-          style={[
-            styles.button,
-            styles.buttonOutline,
-            { position: "absolute", top: 10, right: 10, borderWidth: 0 },
-          ]}
-        >
-          <Text style={styles.buttonText}>Save</Text>
-        </TouchableOpacity>
-        <View style={styles.titleBackground}>
-          <View style={styles.innerTitleBackground}>
-            <TextInput
-              style={styles.titleText}
-              placeholder="Name"
-              value={questionSetTitle}
-              onChangeText={setQuestionSetTitle}
-            ></TextInput>
+          <TouchableOpacity
+            onPress={() => {}}
+            style={[
+              styles.button,
+              styles.buttonOutline,
+              { position: "absolute", top: 20, left: 10, borderWidth: 0 },
+            ]}
+          >
+            <Text style={styles.buttonText}>Discard</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {}}
+            style={[
+              styles.button,
+              styles.buttonOutline,
+              { position: "absolute", top: 20, right: 10, borderWidth: 0 },
+            ]}
+          >
+            <Text style={styles.buttonText}>Save</Text>
+          </TouchableOpacity>
+          <View style={styles.titleBackground}>
+            <View style={styles.innerTitleBackground}>
+              <TextInput
+                style={styles.titleText}
+                placeholder="Name"
+                value={questionSetTitle}
+                onChangeText={setQuestionSetTitle}
+              ></TextInput>
+            </View>
           </View>
-        </View>
-        <TouchableOpacity
-          onPress={() => {}}
-          style={[
-            styles.button,
-            styles.buttonOutline,
-            {
-              position: "absolute",
-              bottom: 20,
-              left: 20,
-              borderWidth: 0,
-              width: "auto",
-              shadowColor: "black",
-              shadowOffset: {
-                width: 0,
-                height: 10,
+          <View style={styles.centeredView}>
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {
+                Alert.alert("Modal has been closed.");
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <Text style={styles.modalText}>Hello World!</Text>
+                  <Pressable
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={() => setModalVisible(!modalVisible)}
+                  >
+                    <Text style={styles.textStyle}>Hide Modal</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </Modal>
+            <Pressable
+              style={[styles.button, styles.buttonOpen]}
+              onPress={() => setModalVisible(true)}
+            >
+              <Text style={styles.textStyle}>Show Modal</Text>
+            </Pressable>
+          </View>
+          <TouchableOpacity
+            onPress={() => {}}
+            style={[
+              styles.button,
+              styles.buttonOutline,
+              {
+                position: "absolute",
+                bottom: 20,
+                left: 20,
+                borderWidth: 0,
+                width: "auto",
+                shadowColor: "black",
+                shadowOffset: {
+                  width: 0,
+                  height: 10,
+                },
+                shadowOpacity: 0.5,
+                shadowRadius: 12,
+                elevation: 20,
               },
-              shadowOpacity: 0.5,
-              shadowRadius: 12,
-              elevation: 20,
-            },
-          ]}
-        >
-          <Image source={folderIcon}></Image>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {}}
-          style={[
-            styles.button,
-            styles.buttonOutline,
-            {
-              position: "absolute",
-              bottom: 20,
-              right: 20,
-              borderWidth: 0,
-              width: "auto",
-              shadowColor: "black",
-              shadowOffset: {
-                width: 0,
-                height: 10,
+            ]}
+          >
+            <Image source={folderIcon}></Image>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {}}
+            style={[
+              styles.button,
+              styles.buttonOutline,
+              {
+                position: "absolute",
+                bottom: 20,
+                right: 20,
+                borderWidth: 0,
+                width: "auto",
+                shadowColor: "black",
+                shadowOffset: {
+                  width: 0,
+                  height: 10,
+                },
+                shadowOpacity: 0.5,
+                shadowRadius: 12,
+                elevation: 20,
               },
-              shadowOpacity: 0.5,
-              shadowRadius: 12,
-              elevation: 20,
-            },
-          ]}
-        >
-          <Image source={plusIcon}></Image>
-        </TouchableOpacity>
-      </ImageBackground>
+            ]}
+          >
+            <Image source={plusIcon}></Image>
+          </TouchableOpacity>
+        </ImageBackground>
+      </View>
     </KeyboardAvoidingView>
   );
 };
@@ -122,6 +157,12 @@ const styles = StyleSheet.create({
   image: {
     flex: 1,
     height: height,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
   },
   input: {
     width: "80%",
@@ -187,5 +228,46 @@ const styles = StyleSheet.create({
     color: "black",
     fontWeight: "700",
     fontSize: 16,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  buttonModal: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
   },
 });
