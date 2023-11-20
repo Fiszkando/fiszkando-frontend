@@ -123,7 +123,7 @@ const ProfileScreen = () => {
             <View
               style={{
                 width: "100%",
-                alignItems: "center" /* make it a separate style */,
+                alignItems: "center" /* TODO: make it a separate style */,
               }}
             >
               <View style={styles.cardContainer}>
