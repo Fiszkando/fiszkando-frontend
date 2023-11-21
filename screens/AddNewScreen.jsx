@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Dimensions } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const { height } = Dimensions.get("window");
 const backgroundImg = require("../assets/tlo.png");
@@ -22,130 +23,192 @@ const folderIcon = require("../assets/folder.png");
 
 const ProfileScreen = () => {
   const [questionSetTitle, setQuestionSetTitle] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
+  const [folderModalVisible, setFolderModalVisible] = useState(false);
+  const [discardModalVisible, setDiscardModalVisible] = useState(false);
+  const [addQuestionModalVisible, setAddQuestionModalVisible] = useState(false);
+
+  function handleDiscard() {}
+
+  function handleSave() {}
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
+    <SafeAreaView
+      style={[styles.container, { opacity: folderModalVisible ? 0.5 : 1 }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <View style={{ opacity: modalVisible ? 0.5 : 1 }}>
-        {/* TODO: think about changing to SafeAreaView as the general container (adds padding for devices with notch) */}
-        <ImageBackground
-          source={backgroundImg}
-          resizeMode="cover"
-          style={styles.image}
+      <ImageBackground
+        source={backgroundImg}
+        resizeMode="cover"
+        style={styles.image}
+      >
+        <TouchableOpacity
+          onPress={() => {
+            setDiscardModalVisible(true);
+          }}
+          style={[
+            styles.button,
+            styles.buttonOutline,
+            { position: "absolute", top: 20, left: 10, borderWidth: 0 },
+          ]}
         >
-          <TouchableOpacity
-            onPress={() => {}}
-            style={[
-              styles.button,
-              styles.buttonOutline,
-              { position: "absolute", top: 20, left: 10, borderWidth: 0 },
-            ]}
+          <Text style={styles.buttonText}>Discard</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {}}
+          style={[
+            styles.button,
+            styles.buttonOutline,
+            { position: "absolute", top: 20, right: 10, borderWidth: 0 },
+          ]}
+        >
+          <Text style={styles.buttonText}>Save</Text>
+        </TouchableOpacity>
+        <View style={styles.titleBackground}>
+          <View style={styles.innerTitleBackground}>
+            <TextInput
+              style={styles.titleText}
+              placeholder="Name"
+              value={questionSetTitle}
+              onChangeText={setQuestionSetTitle}
+            ></TextInput>
+          </View>
+        </View>
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={folderModalVisible}
+            onRequestClose={() => {
+              setFolderModalVisible(!folderModalVisible);
+            }}
           >
-            <Text style={styles.buttonText}>Discard</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {}}
-            style={[
-              styles.button,
-              styles.buttonOutline,
-              { position: "absolute", top: 20, right: 10, borderWidth: 0 },
-            ]}
-          >
-            <Text style={styles.buttonText}>Save</Text>
-          </TouchableOpacity>
-          <View style={styles.titleBackground}>
-            <View style={styles.innerTitleBackground}>
-              <TextInput
-                style={styles.titleText}
-                placeholder="Name"
-                value={questionSetTitle}
-                onChangeText={setQuestionSetTitle}
-              ></TextInput>
+            <View style={styles.centeredView}>
+              <TouchableOpacity
+                style={styles.modalContainer}
+                onPress={() => setFolderModalVisible(false)}
+              >
+                <TouchableOpacity
+                  style={{
+                    height: 300,
+                    width: 300,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "white",
+                  }}
+                  activeOpacity={1}
+                >
+                  <Text>Modal Content Folder...</Text>
+                </TouchableOpacity>
+              </TouchableOpacity>
             </View>
-          </View>
-          <View style={styles.centeredView}>
-            <Modal
-              animationType="fade"
-              transparent={true}
-              visible={modalVisible}
-              onRequestClose={() => {
-                Alert.alert("Modal has been closed.");
-                setModalVisible(!modalVisible);
-              }}
-            >
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                  <Text style={styles.modalText}>Hello World!</Text>
-                  <Pressable
-                    style={[styles.button, styles.buttonClose]}
-                    onPress={() => setModalVisible(!modalVisible)}
-                  >
-                    <Text style={styles.textStyle}>Hide Modal</Text>
-                  </Pressable>
-                </View>
-              </View>
-            </Modal>
-            <Pressable
-              style={[styles.button, styles.buttonOpen]}
-              onPress={() => setModalVisible(true)}
-            >
-              <Text style={styles.textStyle}>Show Modal</Text>
-            </Pressable>
-          </View>
-          <TouchableOpacity
-            onPress={() => {}}
-            style={[
-              styles.button,
-              styles.buttonOutline,
-              {
-                position: "absolute",
-                bottom: 20,
-                left: 20,
-                borderWidth: 0,
-                width: "auto",
-                shadowColor: "black",
-                shadowOffset: {
-                  width: 0,
-                  height: 10,
-                },
-                shadowOpacity: 0.5,
-                shadowRadius: 12,
-                elevation: 20,
-              },
-            ]}
+          </Modal>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={discardModalVisible}
+            onRequestClose={() => {
+              setDiscardModalVisible(!discardModalVisible);
+            }}
           >
-            <Image source={folderIcon}></Image>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {}}
-            style={[
-              styles.button,
-              styles.buttonOutline,
-              {
-                position: "absolute",
-                bottom: 20,
-                right: 20,
-                borderWidth: 0,
-                width: "auto",
-                shadowColor: "black",
-                shadowOffset: {
-                  width: 0,
-                  height: 10,
-                },
-                shadowOpacity: 0.5,
-                shadowRadius: 12,
-                elevation: 20,
-              },
-            ]}
+            <View style={styles.centeredView}>
+              <TouchableOpacity
+                style={styles.modalContainer}
+                onPress={() => setDiscardModalVisible(false)}
+              >
+                <TouchableOpacity
+                  style={{
+                    height: 300,
+                    width: 300,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "white",
+                  }}
+                  activeOpacity={1}
+                >
+                  <Text>Modal Content Discard...</Text>
+                </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={addQuestionModalVisible}
+            onRequestClose={() => {
+              setAddQuestionModalVisible(!addQuestionModalVisible);
+            }}
           >
-            <Image source={plusIcon}></Image>
-          </TouchableOpacity>
-        </ImageBackground>
-      </View>
-    </KeyboardAvoidingView>
+            <View style={styles.centeredView}>
+              <TouchableOpacity
+                style={styles.modalContainer}
+                onPress={() => setAddQuestionModalVisible(false)}
+              >
+                <TouchableOpacity
+                  style={{
+                    height: 300,
+                    width: 300,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "white",
+                  }}
+                  activeOpacity={1}
+                >
+                  <Text>Modal Content Add Question...</Text>
+                </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+        </View>
+        <TouchableOpacity
+          onPress={() => setFolderModalVisible(true)}
+          style={[
+            styles.button,
+            styles.buttonOutline,
+            {
+              position: "absolute",
+              bottom: 20,
+              left: 20,
+              borderWidth: 0,
+              width: "auto",
+              shadowColor: "black",
+              shadowOffset: {
+                width: 0,
+                height: 10,
+              },
+              shadowOpacity: 0.5,
+              shadowRadius: 12,
+              elevation: 20,
+            },
+          ]}
+        >
+          <Image source={folderIcon}></Image>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setAddQuestionModalVisible(true)}
+          style={[
+            styles.button,
+            styles.buttonOutline,
+            {
+              position: "absolute",
+              bottom: 20,
+              right: 20,
+              borderWidth: 0,
+              width: "auto",
+              shadowColor: "black",
+              shadowOffset: {
+                width: 0,
+                height: 10,
+              },
+              shadowOpacity: 0.5,
+              shadowRadius: 12,
+              elevation: 20,
+            },
+          ]}
+        >
+          <Image source={plusIcon}></Image>
+        </TouchableOpacity>
+      </ImageBackground>
+    </SafeAreaView>
   );
 };
 export default ProfileScreen;
@@ -162,7 +225,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22,
+    position: "absolute",
   },
   input: {
     width: "80%",
@@ -229,45 +292,16 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 16,
   },
+  /* MODAL */
   centeredView: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 22,
   },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  buttonModal: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  buttonOpen: {
-    backgroundColor: "#F194FF",
-  },
-  buttonClose: {
-    backgroundColor: "#2196F3",
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center",
   },
 });
