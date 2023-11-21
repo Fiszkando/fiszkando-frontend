@@ -29,7 +29,7 @@ const ProfileScreen = () => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <View style={{ opacity: modalVisible ? 0.5 : 1 }} o>
+      <View style={{ opacity: modalVisible ? 0.5 : 1 }}>
         {/* TODO: think about changing to SafeAreaView as the general container (adds padding for devices with notch) */}
         <ImageBackground
           source={backgroundImg}

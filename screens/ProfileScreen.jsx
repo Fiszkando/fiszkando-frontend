@@ -120,12 +120,7 @@ const ProfileScreen = () => {
             style={styles.cardsContainer}
             contentContainerStyle={styles.cardsContainerContent}
           >
-            <View
-              style={{
-                width: "100%",
-                alignItems: "center" /* TODO: make it a separate style */,
-              }}
-            >
+            <View style={styles.cardSectionContainer}>
               <View style={styles.cardContainer}>
                 <View style={styles.cardBackground}>
                   <View style={styles.cardIconBackground}>
@@ -161,7 +156,7 @@ const ProfileScreen = () => {
                 </TouchableOpacity>
               </View>
             </View>
-            <View style={{ width: "100%", alignItems: "center" }}>
+            <View style={styles.cardSectionContainer}>
               <View style={styles.cardContainer}>
                 <View style={styles.cardBackground}>
                   <View style={styles.cardIconBackground}>
@@ -174,7 +169,12 @@ const ProfileScreen = () => {
                       placeholder="Username"
                       style={[
                         styles.input,
-                        { backgroundColor: "white", color: "#2F93BE" },
+                        {
+                          backgroundColor: "transparent",
+                          color: "#2F93BE",
+                          fontWeight: "bold",
+                          fontSize: 20,
+                        },
                       ]}
                       value={"Your username: " + username}
                       editable={false}
@@ -198,10 +198,10 @@ const ProfileScreen = () => {
                 </TouchableOpacity>
               </View>
             </View>
-            <View style={{ width: "100%", alignItems: "center" }}>
+            <View style={styles.cardSectionContainer}>
               <View style={styles.cardContainer}>
                 <View style={styles.cardBackground}>
-                  <View style={[styles.cardIconBackground, { height: "32%" }]}>
+                  <View style={styles.cardIconBackground}>
                     <Image source={deleteIcon}></Image>
                   </View>
                   <Text style={styles.cardTitle}>Delete account</Text>
@@ -222,15 +222,11 @@ const ProfileScreen = () => {
                 </TouchableOpacity>
               </View>
             </View>
-            <View style={{ width: "100%", alignItems: "center" }}>
+            <View style={styles.cardSectionContainer}>
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   onPress={handleSignOut}
-                  style={[
-                    styles.button,
-                    styles.buttonOutline,
-                    { marginTop: 30 },
-                  ]}
+                  style={[styles.button, styles.buttonOutline]}
                 >
                   <Text style={styles.buttonText}>Log out</Text>
                 </TouchableOpacity>
@@ -301,28 +297,29 @@ const styles = StyleSheet.create({
   },
   cardsScrollviewContainer: {
     marginTop: 0.15 * height,
-    height: "100%",
     flex: 1,
   },
-  cardsContainer: {
-    // backgroundColor: 'yellow',
-  },
+  cardsContainer: {},
   cardsContainerContent: {
     gap: 20,
-    // backgroundColor: 'red',
     alignItems: "center",
     paddingBottom: 20,
   },
+  cardSectionContainer: {
+    width: "100%",
+    alignItems: "center",
+    flex: 1,
+    gap: 4,
+  },
   cardContainer: {
     width: "100%",
-    height: 0.32 * height,
     alignItems: "center",
+    marginTop: 24,
   },
   cardBackground: {
     width: "80%",
     backgroundColor: "white",
     borderRadius: 20,
-    top: 0.04 * height,
     shadowColor: "black",
     shadowOffset: {
       width: 0,
@@ -331,12 +328,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 12,
     elevation: 12,
+    paddingBottom: 20,
   },
   cardIconBackground: {
-    width: "18%",
-    height: "28%",
+    width: 50,
+    height: 50,
+    position: "absolute",
     backgroundColor: "white",
-    borderRadius: 100,
+    borderRadius: 50,
     top: "-12%",
     left: "5%",
     justifyContent: "center",
@@ -354,8 +353,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#2F93BE",
     fontWeight: "bold",
-    top: -10,
-    left: 35,
+    marginTop: 20,
+    marginBottom: 10,
+    marginLeft: 80,
   },
   cardText: {
     color: "black",
