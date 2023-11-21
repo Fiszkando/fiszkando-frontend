@@ -12,6 +12,7 @@ import {
   Modal,
   Pressable,
 } from "react-native";
+import { SelectList } from "react-native-dropdown-select-list";
 import { db } from "../firebase";
 import { collection, onSnapshot } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
@@ -24,6 +25,7 @@ const plusIcon = require("../assets/plus.png");
 const folderIcon = require("../assets/folder.png");
 
 const ProfileScreen = () => {
+  //TODO: maybe use spinner in the future
   const [loading, setLoading] = useState(false);
   const [questionsList, setQuestionsList] = useState([]);
   const [category, setCategory] = useState("");
@@ -34,14 +36,23 @@ const ProfileScreen = () => {
   const [addQuestionModalVisible, setAddQuestionModalVisible] = useState(false);
 
   useEffect(() => {
+    //TODO: maybe use spinner in the future
+    setLoading(true);
     const categories = collection(db, "categories");
     onSnapshot(categories, (snapshot) => {
       const tempDoc = [];
       snapshot.forEach((doc) => {
         tempDoc.push({ id: doc.id, ...doc.data() });
       });
-      setCategoriesList(tempDoc.map((el) => el.name));
+      setCategoriesList(
+        tempDoc.map((el, idx) => {
+          return { key: idx, value: el.name };
+        })
+      );
+      console.log(categoriesList);
     });
+    //TODO: maybe use spinner in the future
+    setLoading(false);
   }, []);
 
   function handleDiscard() {
@@ -142,7 +153,12 @@ const ProfileScreen = () => {
                     }}
                   ></Image>
                 </TouchableOpacity>
-                <Text>Modal Content Category...</Text>
+                <Text>Select category:</Text>
+                <SelectList
+                  setSelected={(val) => setCategory(val)}
+                  data={categoriesList}
+                  save="value"
+                />
               </TouchableOpacity>
             </TouchableOpacity>
           </Modal>
