@@ -22,18 +22,34 @@ const plusIcon = require("../assets/plus.png");
 const folderIcon = require("../assets/folder.png");
 
 const ProfileScreen = () => {
+  const [questionsList, setQuestionsList] = useState([]);
+  const [category, setCategory] = useState("");
   const [questionSetTitle, setQuestionSetTitle] = useState("");
-  const [folderModalVisible, setFolderModalVisible] = useState(false);
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [discardModalVisible, setDiscardModalVisible] = useState(false);
   const [addQuestionModalVisible, setAddQuestionModalVisible] = useState(false);
 
-  function handleDiscard() {}
+  function handleDiscard() {
+    setQuestionsList([]);
+    setCategory("");
+    setQuestionSetTitle("");
+  }
 
   function handleSave() {}
 
   return (
     <SafeAreaView
-      style={[styles.container, { opacity: folderModalVisible ? 0.5 : 1 }]}
+      style={[
+        styles.container,
+        {
+          opacity:
+            discardModalVisible ||
+            categoryModalVisible ||
+            addQuestionModalVisible
+              ? 0.4 //if modal visible apply reduced opacity
+              : 1,
+        },
+      ]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ImageBackground
@@ -41,6 +57,16 @@ const ProfileScreen = () => {
         resizeMode="cover"
         style={styles.image}
       >
+        <View style={styles.titleBackground}>
+          <View style={styles.innerTitleBackground}>
+            <TextInput
+              style={styles.titleText}
+              placeholder=" Enter name"
+              value={questionSetTitle}
+              onChangeText={(text) => setQuestionSetTitle(text)}
+            ></TextInput>
+          </View>
+        </View>
         <TouchableOpacity
           onPress={() => {
             setDiscardModalVisible(true);
@@ -63,44 +89,26 @@ const ProfileScreen = () => {
         >
           <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>
-        <View style={styles.titleBackground}>
-          <View style={styles.innerTitleBackground}>
-            <TextInput
-              style={styles.titleText}
-              placeholder="Name"
-              value={questionSetTitle}
-              onChangeText={setQuestionSetTitle}
-            ></TextInput>
-          </View>
-        </View>
         <View style={styles.centeredView}>
           <Modal
             animationType="fade"
             transparent={true}
-            visible={folderModalVisible}
+            visible={categoryModalVisible}
             onRequestClose={() => {
-              setFolderModalVisible(!folderModalVisible);
+              setCategoryModalVisible(!categoryModalVisible);
             }}
           >
-            <View style={styles.centeredView}>
+            <TouchableOpacity
+              style={styles.modalContainer}
+              onPress={() => setCategoryModalVisible(false)}
+            >
               <TouchableOpacity
-                style={styles.modalContainer}
-                onPress={() => setFolderModalVisible(false)}
+                style={styles.modalBackground}
+                activeOpacity={1}
               >
-                <TouchableOpacity
-                  style={{
-                    height: 300,
-                    width: 300,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "white",
-                  }}
-                  activeOpacity={1}
-                >
-                  <Text>Modal Content Folder...</Text>
-                </TouchableOpacity>
+                <Text>Modal Content Category...</Text>
               </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
           </Modal>
           <Modal
             animationType="fade"
@@ -116,13 +124,7 @@ const ProfileScreen = () => {
                 onPress={() => setDiscardModalVisible(false)}
               >
                 <TouchableOpacity
-                  style={{
-                    height: 300,
-                    width: 300,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "white",
-                  }}
+                  style={styles.modalBackground}
                   activeOpacity={1}
                 >
                   <Text>Modal Content Discard...</Text>
@@ -144,13 +146,7 @@ const ProfileScreen = () => {
                 onPress={() => setAddQuestionModalVisible(false)}
               >
                 <TouchableOpacity
-                  style={{
-                    height: 300,
-                    width: 300,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "white",
-                  }}
+                  style={styles.modalBackground}
                   activeOpacity={1}
                 >
                   <Text>Modal Content Add Question...</Text>
@@ -160,7 +156,7 @@ const ProfileScreen = () => {
           </Modal>
         </View>
         <TouchableOpacity
-          onPress={() => setFolderModalVisible(true)}
+          onPress={() => setCategoryModalVisible(true)}
           style={[
             styles.button,
             styles.buttonOutline,
@@ -225,7 +221,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    position: "absolute",
   },
   input: {
     width: "80%",
@@ -246,7 +241,7 @@ const styles = StyleSheet.create({
   titleBackground: {
     width: "80%",
     height: 0.1 * height,
-    top: 0.12 * height,
+    marginTop: 0.12 * height,
     marginHorizontal: "10%",
     backgroundColor: "white",
     borderRadius: 30,
@@ -303,5 +298,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  modalBackground: {
+    height: 0.4 * height,
+    width: 0.4 * height,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
   },
 });
