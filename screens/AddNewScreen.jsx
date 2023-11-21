@@ -52,7 +52,7 @@ const ProfileScreen = () => {
   }
 
   function handleSave() {
-    //save to firebase db
+    console.log("save clicked");
   }
 
   return (
@@ -98,7 +98,7 @@ const ProfileScreen = () => {
           <Text style={styles.buttonText}>Discard</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => {}}
+          onPress={() => handleSave()}
           style={[
             styles.button,
             styles.buttonOutline,
