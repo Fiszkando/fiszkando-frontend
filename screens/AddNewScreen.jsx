@@ -12,6 +12,8 @@ import {
   Modal,
   Pressable,
 } from "react-native";
+import { db } from "../firebase";
+import { collection, onSnapshot } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,15 +21,28 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const { height } = Dimensions.get("window");
 const backgroundImg = require("../assets/tlo.png");
 const plusIcon = require("../assets/plus.png");
-const folderIcon = require("../assets/folder.png");
 
+const folderIcon = require("../assets/folder.png");
 const ProfileScreen = () => {
+  const [loading, setLoading] = useState(false);
   const [questionsList, setQuestionsList] = useState([]);
   const [category, setCategory] = useState("");
+  const [categoriesList, setCategoriesList] = useState([]);
   const [questionSetTitle, setQuestionSetTitle] = useState("");
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [discardModalVisible, setDiscardModalVisible] = useState(false);
   const [addQuestionModalVisible, setAddQuestionModalVisible] = useState(false);
+
+  useEffect(() => {
+    const categories = collection(db, "categories");
+    onSnapshot(categories, (snapshot) => {
+      const tempDoc = [];
+      snapshot.forEach((doc) => {
+        tempDoc.push({ id: doc.id, ...doc.data() });
+      });
+      setCategoriesList(tempDoc.map((el) => el.name));
+    });
+  }, []);
 
   function handleDiscard() {
     setQuestionsList([]);
@@ -35,7 +50,9 @@ const ProfileScreen = () => {
     setQuestionSetTitle("");
   }
 
-  function handleSave() {}
+  function handleSave() {
+    //save to firebase db
+  }
 
   return (
     <SafeAreaView
@@ -106,6 +123,24 @@ const ProfileScreen = () => {
                 style={styles.modalBackground}
                 activeOpacity={1}
               >
+                <View style={styles.modalIconBackground}>
+                  <Image source={folderIcon}></Image>
+                </View>
+                <TouchableOpacity
+                  style={styles.modalCloseWrapper}
+                  onPress={() => {
+                    setCategoryModalVisible(false);
+                  }}
+                >
+                  <Image
+                    source={plusIcon}
+                    style={{
+                      transform: "rotate(45deg)",
+                      width: 20,
+                      height: 20,
+                    }}
+                  ></Image>
+                </TouchableOpacity>
                 <Text>Modal Content Category...</Text>
               </TouchableOpacity>
             </TouchableOpacity>
@@ -305,5 +340,30 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
+    borderRadius: 20,
+  },
+  modalIconBackground: {
+    position: "absolute",
+    top: -24,
+    left: 24,
+    backgroundColor: "#F5F5F5",
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 50,
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 12,
+    elevation: 20,
+  },
+  modalCloseWrapper: {
+    position: "absolute",
+    top: 16,
+    right: 16,
   },
 });
