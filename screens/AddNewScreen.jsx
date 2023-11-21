@@ -21,8 +21,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const { height } = Dimensions.get("window");
 const backgroundImg = require("../assets/tlo.png");
 const plusIcon = require("../assets/plus.png");
-
 const folderIcon = require("../assets/folder.png");
+
 const ProfileScreen = () => {
   const [loading, setLoading] = useState(false);
   const [questionsList, setQuestionsList] = useState([]);
@@ -48,6 +48,7 @@ const ProfileScreen = () => {
     setQuestionsList([]);
     setCategory("");
     setQuestionSetTitle("");
+    setDiscardModalVisible(false);
   }
 
   function handleSave() {
@@ -162,7 +163,29 @@ const ProfileScreen = () => {
                   style={styles.modalBackground}
                   activeOpacity={1}
                 >
-                  <Text>Modal Content Discard...</Text>
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      color: "#2F93BE",
+                    }}
+                  >
+                    Do you really want to discard this set? This operation
+                    cannot be reversed
+                  </Text>
+                  <View style={[{ flexDirection: "row", gap: 15 }]}>
+                    <TouchableOpacity
+                      style={[styles.button, { backgroundColor: "red" }]}
+                      onPress={() => handleDiscard()}
+                    >
+                      <Text>Yes</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={() => setDiscardModalVisible(false)}
+                    >
+                      <Text>No</Text>
+                    </TouchableOpacity>
+                  </View>
                 </TouchableOpacity>
               </TouchableOpacity>
             </View>
