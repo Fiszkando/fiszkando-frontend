@@ -29,6 +29,7 @@ const ProfileScreen = () => {
   const [loading, setLoading] = useState(false);
   const [questionsList, setQuestionsList] = useState([]);
   const [category, setCategory] = useState("");
+  const [categoryKey, setCategoryKey] = useState("");
   const [categoriesList, setCategoriesList] = useState([]);
   const [questionSetTitle, setQuestionSetTitle] = useState("");
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
@@ -49,7 +50,6 @@ const ProfileScreen = () => {
           return { key: idx, value: el.name };
         })
       );
-      console.log(categoriesList);
     });
     //TODO: maybe use spinner in the future
     setLoading(false);
@@ -58,6 +58,7 @@ const ProfileScreen = () => {
   function handleDiscard() {
     setQuestionsList([]);
     setCategory("");
+    setCategoryKey("");
     setQuestionSetTitle("");
     setDiscardModalVisible(false);
   }
@@ -153,11 +154,16 @@ const ProfileScreen = () => {
                     }}
                   ></Image>
                 </TouchableOpacity>
-                <Text>Select category:</Text>
+                {category ? (
+                  <Text>{`Selected category: ${category}`}</Text>
+                ) : (
+                  <Text>{"Select category"}</Text>
+                )}
                 <SelectList
-                  setSelected={(val) => setCategory(val)}
+                  setSelected={setCategory}
                   data={categoriesList}
                   save="value"
+                  searchPlaceholder={"Search"}
                 />
               </TouchableOpacity>
             </TouchableOpacity>
