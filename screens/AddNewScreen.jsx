@@ -32,10 +32,8 @@ const ProfileScreen = () => {
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState([]);
   const questionsTemp = [
-    { id: "testoweId", data: "testoweData" },
-    { id: "testoweId2", data: "testoweData2" },
-    { id: "testoweId3", data: "testoweData3" },
-    { id: "testoweId4", data: "testoweData4" },
+    { id: 1, data: "testoweData" },
+    { id: 2, data: "testoweData2" },
   ];
   const [category, setCategory] = useState("");
   const [categoriesList, setCategoriesList] = useState([]);
@@ -69,6 +67,8 @@ const ProfileScreen = () => {
     setTitle("");
     setDiscardModalVisible(false);
   }
+
+  function updateQuestion({ id, question, answers, correctAnswerIndexes }) {}
 
   function handleSave() {
     console.log("save clicked");
@@ -108,11 +108,24 @@ const ProfileScreen = () => {
             ></TextInput>
           </View>
         </View>
-        <FlatList
-          data={questionsTemp}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />
+        <View
+          style={{
+            width: "90%",
+            height: 0.58 * height,
+          }}
+        >
+          <View
+            style={{
+              flex: 1,
+            }}
+          >
+            <FlatList
+              data={questionsTemp}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.id}
+            />
+          </View>
+        </View>
         <TouchableOpacity
           onPress={() => {
             setDiscardModalVisible(true);
@@ -351,6 +364,7 @@ const styles = StyleSheet.create({
   image: {
     flex: 1,
     height: height,
+    alignItems: "center",
   },
   centeredView: {
     flex: 1,
