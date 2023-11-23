@@ -6,6 +6,9 @@ import {
   TextInput,
   Image,
   KeyboardAvoidingView,
+  TouchableOpacity,
+  Modal,
+  Dimensions,
 } from "react-native";
 import Checkbox from "expo-checkbox";
 
@@ -13,6 +16,8 @@ import Checkbox from "expo-checkbox";
 //answers: map (with keys 1-4)
 //correctAnswerIndexes: array
 //question: string
+
+const { height } = Dimensions.get("window");
 
 const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
   const [question, setQuestion] = useState("");
@@ -25,15 +30,89 @@ const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
   const [answer3correct, setAnswer3Correct] = useState(false);
   const [answer4correct, setAnswer4Correct] = useState(false);
 
+  const [discardModalVisible, setDiscardModalVisible] = useState(false);
+
   const questionMarkIcon = require("../assets/question-mark.png");
+  const plusIcon = require("../assets/plus.png");
 
   function onUpdate(question) {}
 
   return (
-    <View style={styles.questionContainer}>
+    <View
+      style={[
+        styles.questionContainer,
+        {
+          opacity: discardModalVisible
+            ? 0.4 //if modal visible apply reduced opacity
+            : 1,
+        },
+      ]}
+    >
       <View style={styles.questionIconBackground}>
         <Image source={questionMarkIcon}></Image>
       </View>
+      <TouchableOpacity
+        style={styles.containerCloseWrapper}
+        onPress={() => {
+          setDiscardModalVisible(true);
+        }}
+      >
+        <Image
+          source={plusIcon}
+          style={{
+            transform: "rotate(45deg)",
+            width: 30,
+            height: 30,
+          }}
+        ></Image>
+      </TouchableOpacity>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={discardModalVisible}
+        onRequestClose={() => {
+          setDiscardModalVisible(false);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <TouchableOpacity
+            style={styles.modalContainer}
+            onPress={() => setDiscardModalVisible(false)}
+          >
+            <TouchableOpacity style={styles.modalBackground} activeOpacity={1}>
+              <Text
+                style={{
+                  fontSize: 20,
+                  color: "#2F93BE",
+                  width: "90%",
+                  marginBottom: 16,
+                  textAlign: "center",
+                }}
+              >
+                Do you really want to delete this question? This operation{"\n"}
+                <Text style={{ fontWeight: "bold" }}>cannot</Text> be undone.
+              </Text>
+              <View style={[{ flexDirection: "row", gap: 15 }]}>
+                <TouchableOpacity
+                  style={[styles.button, { backgroundColor: "red" }]}
+                  onPress={() => {
+                    deleteFunction(id);
+                    setDiscardModalVisible(false);
+                  }}
+                >
+                  <Text style={{ color: "white" }}>Delete</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => setDiscardModalVisible(false)}
+                >
+                  <Text style={{ color: "white" }}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
+      </Modal>
       <View style={styles.inputGroup}>
         <Text style={styles.titleText}>Question</Text>
         <TextInput
@@ -201,5 +280,67 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 24,
     fontWeight: "bold",
+  },
+  containerCloseWrapper: {
+    position: "absolute",
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    top: 16,
+    right: 16,
+    zIndex: 999,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalBackground: {
+    height: 0.4 * height,
+    width: 0.4 * height,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#2F93BE",
+  },
+  modalIconBackground: {
+    position: "absolute",
+    top: -24,
+    left: 24,
+    backgroundColor: "#F5F5F5",
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 50,
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 12,
+    elevation: 20,
+  },
+  modalCloseWrapper: {
+    position: "absolute",
+    top: 16,
+    right: 16,
+  },
+  button: {
+    backgroundColor: "#2F93BE",
+    width: "30%",
+    padding: 15,
+    borderRadius: 33,
+    alignItems: "center",
   },
 });

@@ -12,12 +12,12 @@ import {
   Modal,
   Pressable,
   FlatList,
+  Dimensions,
 } from "react-native";
 import { SelectList } from "react-native-dropdown-select-list";
 import { db } from "../firebase";
 import { collection, onSnapshot } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import uuid from "react-native-uuid";
 import CreatorStep from "../components/creatorStep";
@@ -31,10 +31,6 @@ const ProfileScreen = () => {
   //TODO: maybe use spinner in the future
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState([]);
-  const questionsTemp = [
-    { id: 1, data: "testoweData" },
-    { id: 2, data: "testoweData2" },
-  ];
   const [category, setCategory] = useState("");
   const [categoriesList, setCategoriesList] = useState([]);
   const [title, setTitle] = useState("");
@@ -84,7 +80,7 @@ const ProfileScreen = () => {
     setQuestions(updatedQuestions);
   }
 
-  function deleteQuestion({ id }) {
+  function deleteQuestion(id) {
     const updatedQuestions = questions.filter((item) => item.id !== id);
     setQuestions(updatedQuestions);
     console.log(questions);
