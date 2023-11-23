@@ -68,14 +68,52 @@ const ProfileScreen = () => {
     setDiscardModalVisible(false);
   }
 
-  function updateQuestion({ id, question, answers, correctAnswerIndexes }) {}
+  function updateQuestion({ id, question, answers, correctAnswerIndexes }) {
+    const updatedQuestions = questions.map((item) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          question: question,
+          answers: answers,
+          correctAnswerIndexes: correctAnswerIndexes,
+        };
+      } else {
+        return item;
+      }
+    });
+    setQuestions(updatedQuestions);
+  }
+
+  function deleteQuestion({ id }) {
+    const updatedQuestions = questions.filter((item) => item.id !== id);
+    setQuestions(updatedQuestions);
+    console.log(questions);
+  }
+
+  function addQuestion(type) {
+    console.log(type);
+    questions.push({
+      type: type,
+      id: uuid.v4(),
+      question: "",
+      answers: {},
+      correctAnswerIndexes: [],
+    });
+    setAddQuestionModalVisible(false);
+  }
 
   function handleSave() {
-    console.log("save clicked");
+    console.log("save clicked", title, category, questions);
+    // handleDiscard();
   }
 
   const renderItem = ({ item }) => (
-    <CreatorStep id={item.id} data={item.data} />
+    <CreatorStep
+      id={item.id}
+      type={item.type}
+      updateFunction={updateQuestion}
+      deleteFunction={deleteQuestion}
+    />
   );
 
   return (
@@ -102,7 +140,7 @@ const ProfileScreen = () => {
           <View style={styles.innerTitleBackground}>
             <TextInput
               style={styles.titleText}
-              placeholder=" Enter name"
+              placeholder="Set title"
               value={title}
               onChangeText={(text) => setTitle(text)}
             ></TextInput>
@@ -120,7 +158,7 @@ const ProfileScreen = () => {
             }}
           >
             <FlatList
-              data={questionsTemp}
+              data={questions}
               renderItem={renderItem}
               keyExtractor={(item) => item.id}
             />
@@ -297,7 +335,14 @@ const ProfileScreen = () => {
                   style={styles.modalBackground}
                   activeOpacity={1}
                 >
-                  <Text>Modal Content Add Question...</Text>
+                  <TouchableOpacity
+                    style={[styles.button, { width: "80%" }]}
+                    onPress={() => addQuestion("multichoice")}
+                  >
+                    <Text style={{ color: "white" }}>
+                      Add multi-choice question
+                    </Text>
+                  </TouchableOpacity>
                 </TouchableOpacity>
               </TouchableOpacity>
             </View>
@@ -452,6 +497,7 @@ const styles = StyleSheet.create({
     height: 0.4 * height,
     width: 0.4 * height,
     alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "white",
     borderRadius: 20,
   },

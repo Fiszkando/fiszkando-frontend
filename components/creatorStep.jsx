@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Text, View, StyleSheet, TextInput, Image } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  TextInput,
+  Image,
+  KeyboardAvoidingView,
+} from "react-native";
 import Checkbox from "expo-checkbox";
 
 //for now questions are:
@@ -7,7 +14,7 @@ import Checkbox from "expo-checkbox";
 //correctAnswerIndexes: array
 //question: string
 
-const CreatorStep = ({ id = -1, data }) => {
+const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
   const [question, setQuestion] = useState("");
   const [answer1, setAnswer1] = useState("");
   const [answer2, setAnswer2] = useState("");
@@ -20,13 +27,10 @@ const CreatorStep = ({ id = -1, data }) => {
 
   const questionMarkIcon = require("../assets/question-mark.png");
 
+  function onUpdate(question) {}
+
   return (
     <View style={styles.questionContainer}>
-      <Text
-        style={{ color: "red", fontSize: 20, position: "absolute", top: 30 }}
-      >
-        id: {id}
-      </Text>
       <View style={styles.questionIconBackground}>
         <Image source={questionMarkIcon}></Image>
       </View>
@@ -36,8 +40,33 @@ const CreatorStep = ({ id = -1, data }) => {
           placeholderTextColor="white"
           placeholder="Question"
           value={question}
-          onChangeText={(text) => {
-            setQuestion(text);
+          // Add debounce
+          onChangeText={(newQuestion) => {
+            setQuestion(newQuestion);
+            const map = new Map();
+            map.set(1, answer1);
+            map.set(2, answer2);
+            map.set(3, answer3);
+            map.set(4, answer4);
+            const correctAnswers = [];
+            if (answer1correct) {
+              correctAnswers.push(1);
+            }
+            if (answer2correct) {
+              correctAnswers.push(2);
+            }
+            if (answer3correct) {
+              correctAnswers.push(3);
+            }
+            if (answer4correct) {
+              correctAnswers.push(4);
+            }
+            updateFunction({
+              id: id,
+              question: newQuestion,
+              correctAnswerIndexes: correctAnswers,
+              answers: map,
+            });
           }}
           style={styles.input}
         ></TextInput>
