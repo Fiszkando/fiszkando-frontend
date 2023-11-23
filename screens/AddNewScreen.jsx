@@ -189,23 +189,27 @@ const ProfileScreen = () => {
                     style={{
                       fontSize: 20,
                       color: "#2F93BE",
+                      width: "90%",
+                      marginBottom: 16,
+                      textAlign: "center",
                     }}
                   >
-                    Do you really want to discard this set? This operation
-                    cannot be reversed
+                    Do you really want to discard this set? This operation{"\n"}
+                    <Text style={{ fontWeight: "bold" }}>cannot</Text> be
+                    undone.
                   </Text>
                   <View style={[{ flexDirection: "row", gap: 15 }]}>
                     <TouchableOpacity
                       style={[styles.button, { backgroundColor: "red" }]}
                       onPress={() => handleDiscard()}
                     >
-                      <Text>Yes</Text>
+                      <Text style={{ color: "white" }}>Discard</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={styles.button}
                       onPress={() => setDiscardModalVisible(false)}
                     >
-                      <Text>No</Text>
+                      <Text style={{ color: "white" }}>Cancel</Text>
                     </TouchableOpacity>
                   </View>
                 </TouchableOpacity>
