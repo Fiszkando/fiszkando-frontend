@@ -5,11 +5,12 @@ import { signOut } from 'firebase/auth';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 import {Dimensions} from 'react-native'; 
+import TitleBanner from "../components/TitleBanner";
+import QuizItem from "../components/QuizItem";
 
 const { height, width } = Dimensions.get('window');
 const backgroundImg = require('../assets/tlo.png');
 const searchImg = require('../assets/search.png');
-const quizIco = require('../assets/laptop.png');
 
 const ExploreScreen = () => {
 
@@ -76,14 +77,10 @@ const ExploreScreen = () => {
   
   const renderItem = ({item}) => {
     return (
-      <TouchableOpacity onPress={handleStartQuiz} style={styles.quizBackground}>
-        <View style={styles.quizIconBackground}>
-          <Image source={quizIco} style={styles.quizIcon}></Image>
-        </View>
-        <Text style={styles.quizAuthor}>{ item.authorId }</Text>
-        <Text style={styles.quizTitle}>{ item.name }</Text>
-        <Text style={styles.quizDescription}>{ item.category }</Text>
-      </TouchableOpacity>
+      <QuizItem 
+      quiz={item} 
+      onPress={() => handleStartQuiz(item.id)} 
+    />
     );
   }
 
@@ -91,11 +88,7 @@ const ExploreScreen = () => {
     <View style={styles.container}>
       <ImageBackground source={backgroundImg} resizeMode="cover" style={styles.image}>
         
-        <View style={styles.titleBackground}>
-          <View style={styles.innerTitleBackground}>
-            <Text style={styles.titleText}> Explore </Text>
-          </View>
-        </View>
+        <TitleBanner title="Explore" />
 
         <View style={styles.searchBackground}>
           <TextInput style={styles.searchText} value={searchText} onChangeText={text => setSearchText(text)} placeholder='Search'></TextInput>
@@ -121,37 +114,6 @@ const styles = StyleSheet.create({
     image: {
       flex: 1,
       height: height,
-    },
-    titleBackground: {
-      width: '80%',
-      height: 0.1 * height,
-      top: 0.12 * height,
-      marginHorizontal: '10%',
-      backgroundColor: 'white',
-      borderRadius: 30,
-      justifyContent: 'center',
-      alignItems: 'center',
-      shadowColor: 'black',
-      shadowOffset: {
-        width: 0,
-        height: 10,
-      },
-      shadowOpacity: 0.5,
-      shadowRadius: 12,
-      elevation: 20,
-    },
-    innerTitleBackground: {
-      width: '95%',
-      height: '85%',
-      borderColor: '#908D8D',
-      borderRadius: 24,
-      borderWidth: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    titleText: {
-      fontFamily: 'Harlow-Solid-Italic',
-      fontSize: 40,
     },
     searchBackground: {
       width: '80%',
@@ -183,60 +145,5 @@ const styles = StyleSheet.create({
       width: '100%',
       height: 0.64 * height,
       marginTop: 0.2 * height,
-    },
-    quizBackground: {
-      width: '80%',
-      height: 0.18 * height,
-      backgroundColor: 'white',
-      borderRadius: 20,
-      top: 0.04 * height,
-      left: '10%',
-      marginBottom: 0.06 * height,
-      shadowColor: 'black',
-      shadowOffset: {
-        width: 0,
-        height: 10,
-      },
-      shadowOpacity: 0.5,
-      shadowRadius: 12,
-      elevation: 12,
-    },
-    quizIconBackground: {
-      width: '16%',
-      height: '34%',
-      backgroundColor: 'white',
-      borderRadius: 100,
-      top: '-12%',
-      left: '5%',
-      justifyContent: 'center',
-      shadowColor: 'black',
-      shadowOffset: {
-        width: 0,
-        height: 10,
-      },
-      shadowOpacity: 0.5,
-      shadowRadius: 12,
-      elevation: 20,
-    },
-    quizIcon: {
-      left: '20%',
-    },
-    quizAuthor: {
-      fontStyle: 'italic',
-      top: -40,
-      textAlign: 'right',
-      paddingRight: '5%',
-      fontSize: 12,
-    },
-    quizTitle: {
-      fontSize: 20,
-      color: '#2F93BE',
-      fontWeight: 'bold',
-      top: -30,
-      left: 30,
-    },
-    quizDescription: {
-      top: -20,
-      left: 50,
     }
 })
