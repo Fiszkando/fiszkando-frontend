@@ -11,6 +11,7 @@ import {
   Alert,
   Modal,
   Pressable,
+  FlatList,
 } from "react-native";
 import { SelectList } from "react-native-dropdown-select-list";
 import { db } from "../firebase";
@@ -18,6 +19,8 @@ import { collection, onSnapshot } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import uuid from "react-native-uuid";
+import CreatorStep from "../components/creatorStep";
 
 const { height } = Dimensions.get("window");
 const backgroundImg = require("../assets/tlo.png");
@@ -27,11 +30,16 @@ const folderIcon = require("../assets/folder.png");
 const ProfileScreen = () => {
   //TODO: maybe use spinner in the future
   const [loading, setLoading] = useState(false);
-  const [questionsList, setQuestionsList] = useState([]);
+  const [questions, setQuestions] = useState([]);
+  const questionsTemp = [
+    { id: "testoweId", data: "testoweData" },
+    { id: "testoweId2", data: "testoweData2" },
+    { id: "testoweId3", data: "testoweData3" },
+    { id: "testoweId4", data: "testoweData4" },
+  ];
   const [category, setCategory] = useState("");
-  const [categoryKey, setCategoryKey] = useState("");
   const [categoriesList, setCategoriesList] = useState([]);
-  const [questionSetTitle, setQuestionSetTitle] = useState("");
+  const [title, setTitle] = useState("");
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [discardModalVisible, setDiscardModalVisible] = useState(false);
   const [addQuestionModalVisible, setAddQuestionModalVisible] = useState(false);
@@ -56,16 +64,19 @@ const ProfileScreen = () => {
   }, []);
 
   function handleDiscard() {
-    setQuestionsList([]);
+    setQuestions([]);
     setCategory("");
-    setCategoryKey("");
-    setQuestionSetTitle("");
+    setTitle("");
     setDiscardModalVisible(false);
   }
 
   function handleSave() {
     console.log("save clicked");
   }
+
+  const renderItem = ({ item }) => (
+    <CreatorStep id={item.id} data={item.data} />
+  );
 
   return (
     <SafeAreaView
@@ -92,11 +103,16 @@ const ProfileScreen = () => {
             <TextInput
               style={styles.titleText}
               placeholder=" Enter name"
-              value={questionSetTitle}
-              onChangeText={(text) => setQuestionSetTitle(text)}
+              value={title}
+              onChangeText={(text) => setTitle(text)}
             ></TextInput>
           </View>
         </View>
+        <FlatList
+          data={questionsTemp}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
         <TouchableOpacity
           onPress={() => {
             setDiscardModalVisible(true);
