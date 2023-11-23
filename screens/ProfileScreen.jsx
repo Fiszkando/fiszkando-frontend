@@ -15,6 +15,7 @@ import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { Dimensions } from "react-native";
 import { updatePassword, updateProfile, deleteUser } from "firebase/auth";
+import TitleBanner from "../components/TitleBanner";
 
 const { height } = Dimensions.get("window");
 const backgroundImg = require("../assets/tlo.png");
@@ -110,11 +111,7 @@ const ProfileScreen = () => {
         resizeMode="cover"
         style={styles.image}
       >
-        <View style={styles.titleBackground}>
-          <View style={styles.innerTitleBackground}>
-            <Text style={styles.titleText}> Profile </Text>
-          </View>
-        </View>
+        <TitleBanner title="Profile" />
         <View style={styles.cardsScrollviewContainer}>
           <ScrollView
             style={styles.cardsContainer}
@@ -267,37 +264,6 @@ const styles = StyleSheet.create({
   inputGroup: {
     gap: 5,
     alignItems: "center",
-  },
-  titleBackground: {
-    width: "80%",
-    height: 0.1 * height,
-    top: 0.12 * height,
-    marginHorizontal: "10%",
-    backgroundColor: "white",
-    borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "black",
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
-    shadowOpacity: 0.5,
-    shadowRadius: 12,
-    elevation: 20,
-  },
-  innerTitleBackground: {
-    width: "95%",
-    height: "85%",
-    borderColor: "#908D8D",
-    borderRadius: 24,
-    borderWidth: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  titleText: {
-    fontFamily: "Harlow-Solid-Italic",
-    fontSize: 40,
   },
   cardsScrollviewContainer: {
     marginTop: 0.15 * height,

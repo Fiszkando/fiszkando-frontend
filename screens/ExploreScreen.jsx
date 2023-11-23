@@ -5,6 +5,7 @@ import { signOut } from 'firebase/auth';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 import {Dimensions} from 'react-native'; 
+import TitleBanner from "../components/TitleBanner";
 
 const { height, width } = Dimensions.get('window');
 const backgroundImg = require('../assets/tlo.png');
@@ -91,11 +92,7 @@ const ExploreScreen = () => {
     <View style={styles.container}>
       <ImageBackground source={backgroundImg} resizeMode="cover" style={styles.image}>
         
-        <View style={styles.titleBackground}>
-          <View style={styles.innerTitleBackground}>
-            <Text style={styles.titleText}> Explore </Text>
-          </View>
-        </View>
+        <TitleBanner title="Explore" />
 
         <View style={styles.searchBackground}>
           <TextInput style={styles.searchText} value={searchText} onChangeText={text => setSearchText(text)} placeholder='Search'></TextInput>
@@ -121,37 +118,6 @@ const styles = StyleSheet.create({
     image: {
       flex: 1,
       height: height,
-    },
-    titleBackground: {
-      width: '80%',
-      height: 0.1 * height,
-      top: 0.12 * height,
-      marginHorizontal: '10%',
-      backgroundColor: 'white',
-      borderRadius: 30,
-      justifyContent: 'center',
-      alignItems: 'center',
-      shadowColor: 'black',
-      shadowOffset: {
-        width: 0,
-        height: 10,
-      },
-      shadowOpacity: 0.5,
-      shadowRadius: 12,
-      elevation: 20,
-    },
-    innerTitleBackground: {
-      width: '95%',
-      height: '85%',
-      borderColor: '#908D8D',
-      borderRadius: 24,
-      borderWidth: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    titleText: {
-      fontFamily: 'Harlow-Solid-Italic',
-      fontSize: 40,
     },
     searchBackground: {
       width: '80%',

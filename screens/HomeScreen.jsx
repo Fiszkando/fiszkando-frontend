@@ -6,6 +6,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View, ImageBackground, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
 import { Dimensions } from 'react-native';
+import TitleBanner from "../components/TitleBanner";
+
 
 const { height, width } = Dimensions.get('window');
 const backgroundImg = require('../assets/tlo.png');
@@ -58,7 +60,7 @@ const HomeScreen = () => {
         const docRef = doc(db, 'question-sets', setId);
         
         const docSnap = await getDoc(docRef);
-        console.log(docSnap);
+        //console.log(docSnap);
         if (docSnap.exists()) {
           
           favQuizzesList.push({ ...docSnap.data(), id: docSnap.id });
@@ -88,14 +90,10 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <ImageBackground source={backgroundImg} resizeMode="cover" style={styles.image}>
 
-        <View style={styles.mainTitleBackground}>
+        
           <Text style={styles.helloText}>Hello! </Text>
-          <View style={styles.titleBackground}>
-            <View style={styles.innerTitleBackground}>
-              <Text style={styles.titleText}> {userName} </Text>
-            </View>
-          </View>
-        </View>
+          <TitleBanner title={userName} />
+        
 
         <View style={styles.mainQuizContainer}>
           <TouchableOpacity onPress={toggleFavoriteList}>
@@ -142,47 +140,13 @@ const styles = StyleSheet.create({
     flex: 1,
     height: height,
   },
-  mainTitleBackground: {
-    height: 0.1 * height,
-    top: 0.12 * height,
-    justifyContent: 'center',
-  },
-  titleBackground: {
-    width: '80%',
-
-    marginHorizontal: '10%',
-    backgroundColor: 'white',
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: 'black',
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
-    shadowOpacity: 0.5,
-    shadowRadius: 12,
-    elevation: 20,
-  },
-  innerTitleBackground: {
-    width: '95%',
-    height: '85%',
-    borderColor: '#908D8D',
-    borderRadius: 24,
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   helloText: {
+    top: 0.12 * height,
     fontSize: 25,
     fontWeight: 'bold',
     marginLeft: 0.1 * width,
     color: 'white',
     left: '10%',
-  },
-  titleText: {
-    fontFamily: 'Harlow-Solid-Italic',
-    fontSize: 40,
   },
   listNameContainer: {
     flexDirection: 'row',
