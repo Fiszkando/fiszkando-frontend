@@ -155,16 +155,51 @@ const ProfileScreen = () => {
                   ></Image>
                 </TouchableOpacity>
                 {category ? (
-                  <Text>{`Selected category: ${category}`}</Text>
+                  <View style={{ marginTop: 24, gap: 4 }}>
+                    <Text
+                      style={{
+                        color: "#2F93BE",
+                        fontSize: 24,
+                        textAlign: "center",
+                      }}
+                    >
+                      Selected category:
+                    </Text>
+                    <Text
+                      style={{
+                        color: "#2F93BE",
+                        fontSize: 28,
+                        fontWeight: "bold",
+                        marginBottom: 16,
+                        textAlign: "center",
+                      }}
+                    >
+                      {category}
+                    </Text>
+                  </View>
                 ) : (
-                  <Text>{"Select category"}</Text>
+                  <Text
+                    style={{
+                      marginTop: 24,
+                      color: "#2F93BE",
+                      fontSize: 28,
+                      fontWeight: "bold",
+                      marginBottom: 16,
+                      textAlign: "center",
+                    }}
+                  >
+                    {"Select category"}
+                  </Text>
                 )}
-                <SelectList
-                  setSelected={setCategory}
-                  data={categoriesList}
-                  save="value"
-                  searchPlaceholder={"Search"}
-                />
+                <View style={{ width: "90%" }}>
+                  <SelectList
+                    setSelected={setCategory}
+                    data={categoriesList}
+                    save="value"
+                    searchPlaceholder={"Search"}
+                    maxHeight={0.18 * height}
+                  />
+                </View>
               </TouchableOpacity>
             </TouchableOpacity>
           </Modal>
@@ -386,7 +421,6 @@ const styles = StyleSheet.create({
   modalBackground: {
     height: 0.4 * height,
     width: 0.4 * height,
-    justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
     borderRadius: 20,
