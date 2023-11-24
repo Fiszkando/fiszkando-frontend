@@ -1,7 +1,6 @@
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { auth } from '../firebase';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import auth from '@react-native-firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { useFonts } from 'expo-font';
@@ -41,7 +40,7 @@ const SignUpScreen = () => {
       return;
     }
 
-    createUserWithEmailAndPassword(auth, email, password)
+    auth().createUserWithEmailAndPassword(email, password)
     .then(userCredentials => {
       const user = userCredentials.user;
       console.log('Registered in with email: ', user.email);

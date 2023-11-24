@@ -1,6 +1,5 @@
-import { db, auth } from '../firebase';
-import { collection, onSnapshot, query, where, getDoc, doc } from 'firebase/firestore';
-import { signOut } from 'firebase/auth';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
@@ -16,9 +15,9 @@ const starIco = require('../assets/star.png');
 const keyIco = require('../assets/key.png');
 
 const HomeScreen = () => {
-  const userEmail = auth.currentUser?.email;
+  const userEmail = auth().currentUser?.email;
   const userName = userEmail ? userEmail.substring(0, userEmail.indexOf('@')) : '';
-  const userID = auth.currentUser.uid;
+  const userID = auth().currentUser?.uid;
   const navigation = useNavigation();
   const [myQuizzes, setMyQuizzes] = useState([]);
   const [myFavoriteQuizzes, setmyFavoriteMyQuizzes] = useState([]);
@@ -39,18 +38,18 @@ const HomeScreen = () => {
 
   useEffect(() => {
     setLoading(true);
-    var myQuestionSets = query(collection(db, 'question-sets'), where('authorId', '==', userID));
+     var myQuestionSets = firestore().collection('question-sets'); //.where(Filter('authorId', '==', userID));
 
-    onSnapshot(myQuestionSets, (snapshot) => {
+    myQuestionSets.onSnapshot((snapshot) => {
       let myQuizzesList = [];
       snapshot.docs.map((doc) => myQuizzesList.push({ ...doc.data(), id: doc.id }));
       setMyQuizzes(myQuizzesList);
 
     })
 
-    const favSetsQuery = query(collection(db, 'favorite-sets'), where('userId', '==', userID));
+    const favSetsQuery = firestore().collection('favorite-sets'); //.where(Filter('userId', '==', userID));
 
-    const favSetsSnapshot = onSnapshot(favSetsQuery, async (snapshot) => {
+    favSetsQuery.onSnapshot(async (snapshot) => {
       const favSetsDocs = snapshot.docs;
 
       const favSetsIds = favSetsDocs.map((doc) => doc.data().setId);
@@ -58,6 +57,7 @@ const HomeScreen = () => {
 
       const favQuizzesList = [];
       for (const setId of favSetsIds) {
+        /*
         const docRef = doc(db, 'question-sets', setId);
         
         const docSnap = await getDoc(docRef);
@@ -66,9 +66,12 @@ const HomeScreen = () => {
           
           favQuizzesList.push({ ...docSnap.data(), id: docSnap.id });
         }
+        */
+        
       }
 
       setmyFavoriteMyQuizzes(favQuizzesList);
+      
     });
 
     setLoading(false);

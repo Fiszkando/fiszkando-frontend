@@ -11,7 +11,7 @@ export default function AuthStack() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-          screenOptions={{
+        screenOptions={{
           headerShown: false
         }}>
         <Stack.Screen name="SignIn" component={LoginScreen} />

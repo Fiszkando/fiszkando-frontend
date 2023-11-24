@@ -1,8 +1,8 @@
 import { ScrollView, ImageBackground, Image, TextInput, StyleSheet, Text, TouchableOpacity, View, FlatList } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { db, auth } from '../firebase';
-import { signOut } from 'firebase/auth';
-import { collection, onSnapshot } from 'firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+
 import { useNavigation } from '@react-navigation/native';
 import {Dimensions} from 'react-native'; 
 import TitleBanner from "../components/TitleBanner";
@@ -21,7 +21,7 @@ const ExploreScreen = () => {
   const navigation = useNavigation();
 
   const handleSignOut = () => {
-    signOut(auth)
+    auth().signOut()
     .then(() => {})
     .catch(error => {
       alert(error.message);
@@ -35,7 +35,7 @@ const ExploreScreen = () => {
   const handleSearch = () => {
     if(searchText.length == 0) {
       setLoading(true);
-      var questionSets = collection(db, 'question-sets');
+      var questionSets = firestore().collection('question-sets');
       onSnapshot(questionSets, (snapshot) => {
         let quizzesList = [];
         snapshot.docs.map((doc) => quizzesList.push({...doc.data(), id: doc.id}));
@@ -45,7 +45,7 @@ const ExploreScreen = () => {
     }
     else {
       setLoading(true);
-      var questionSets = collection(db, 'question-sets');
+      var questionSets = firestore().collection('question-sets');
       onSnapshot(questionSets, (snapshot) => {
         let quizzesList = [];
         snapshot.docs.map((doc) => {
@@ -66,7 +66,7 @@ const ExploreScreen = () => {
 
   useEffect(() => {
     setLoading(true);
-    var questionSets = collection(db, 'question-sets');
+    var questionSets = firestore().collection('question-sets');
     onSnapshot(questionSets, (snapshot) => {
       let quizzesList = [];
       snapshot.docs.map((doc) => quizzesList.push({...doc.data(), id: doc.id}));

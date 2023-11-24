@@ -4,7 +4,12 @@ import { useNavigation } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { useCallback } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
-import auth from '@react-native-firebase/auth';
+import auth from '@react-native-firebase/auth'
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+
+GoogleSignin.configure({
+  webClientId: '488295227624-ml6l374286v1seo6bbtpb4ig35qat6pr.apps.googleusercontent.com',//'1:488295227624:web:31e77c3cf03efab725695d',
+});
 
 SplashScreen.preventAutoHideAsync();
 
@@ -37,8 +42,17 @@ const LoginScreen = () => {
     })
   }
 
-  const handleGoogleLogin = () => {
-    alert('not implemented!');
+  const handleGoogleLogin = async () => {
+    // Check if your device supports Google Play
+    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+    // Get the users ID token
+    const { idToken } = await GoogleSignin.signIn();
+
+    // Create a Google credential with the token
+    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+    // Sign-in the user with the credential
+    await auth().signInWithCredential(googleCredential);
   }
 
   return (

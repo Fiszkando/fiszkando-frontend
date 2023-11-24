@@ -1,14 +1,14 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import { auth } from '../firebase';
-import { signOut } from 'firebase/auth';
+import auth from '@react-native-firebase/auth';
+
 import { useNavigation } from '@react-navigation/native';
 
 const AddNewScreen = () => {
     const navigation = useNavigation();
   
     const handleSignOut = () => {
-      signOut(auth)
+      auth().signOut()
       .then(() => {})
       .catch(error => {
         alert(error.message);

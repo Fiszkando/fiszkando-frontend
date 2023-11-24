@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "488295227624",
+    "firebase_url": "https://fiszkando-9e1d0-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "fiszkando-9e1d0",
+    "storage_bucket": "fiszkando-9e1d0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:488295227624:android:874cb59336fbd51e25695d",
+        "android_client_info": {
+          "package_name": "com.fiszkando"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "488295227624-ml6l374286v1seo6bbtpb4ig35qat6pr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWqa5M91PujZYSO0hYn3Bu3WfOCO2-H54"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "488295227624-ml6l374286v1seo6bbtpb4ig35qat6pr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

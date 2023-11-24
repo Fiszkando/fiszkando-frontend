@@ -1,11 +1,15 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import AuthStack from './navigation/AuthStack';
-import UserStack from './navigation/UserStack';
+import React, { useState, useEffect } from 'react';
+import AuthStack from './navigation/authStack';
+import UserStack from './navigation/userStack';
+import auth from '@react-native-firebase/auth';
+
+SplashScreen.preventAutoHideAsync();
 
 const Stack = createNativeStackNavigator();
 
-function App() {
+export default function App() {
   // Set an initializing state whilst Firebase connects
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
@@ -17,7 +21,7 @@ function App() {
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; 
+    return subscriber;
   }, []);
 
   if (initializing) return null;

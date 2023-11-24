@@ -9,20 +9,18 @@ import {
   Image,
   KeyboardAvoidingView,
   Alert,
+  Dimensions,
 } from "react-native";
+
 import React, { useEffect, useState } from "react";
-import { auth } from "../firebase";
-import { signOut } from "firebase/auth";
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { updatePassword, updateProfile, deleteUser } from "firebase/auth";
+import auth from '@react-native-firebase/auth';
+
 import TitleBanner from "../components/TitleBanner";
 
 const { height } = Dimensions.get("window");
 const backgroundImg = require("../assets/tlo.png");
 const saveIcon = require("../assets/diskette.png");
 const deleteIcon = require("../assets/bin.png");
-
-
 
 
 const ProfileScreen = () => {
@@ -39,7 +37,7 @@ const ProfileScreen = () => {
   }, [auth.currentUser]);
 
   const handleSignOut = () => {
-    signOut(auth)
+    auth().signOut()
       .then(() => {})
       .catch((error) => {
         Alert.alert(error.message);
@@ -51,7 +49,7 @@ const ProfileScreen = () => {
       Alert.alert("Enter valid username");
     }
 
-    updateProfile(auth.currentUser, {
+    auth().updateProfile({
       displayName: newUsername,
     })
       .then(() => {
@@ -76,7 +74,7 @@ const ProfileScreen = () => {
       return;
     }
 
-    updatePassword(auth.currentUser, newPassword)
+    auth().updatePassword(newPassword)
       .then(() => {
         setNewPassword("");
         setConfirmNewPassword("");
@@ -91,7 +89,7 @@ const ProfileScreen = () => {
 
   const handleDeleteUser = () => {
     //add some kind of prompt saying "do you really want to do it???"
-    deleteUser(auth.currentUser)
+    auth().delete()
       .then(() => {
         Alert.alert("User deleted.");
         // User deleted. TODO: check if authguard works (user get signed out automatically)...

@@ -16,7 +16,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.mrajczyk.Fiszkando",
+      "bundleIdentifier": "com.fiszkando",
       "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
@@ -24,7 +24,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.mrajczyk.Fiszkando",
+      "package": "com.fiszkando",
       "googleServicesFile": "./google-services.json"
     },
     "web": {
@@ -32,8 +32,12 @@
     },
     "plugins": [
       "@react-native-firebase/app",
-      "@react-native-firebase/auth",
-      "@react-native-firebase/firestore"
-    ]
+      "@react-native-firebase/auth"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "bc65fb54-a814-4650-a1d4-1b0787ddf24c"
+      }
+    }
   }
 }
