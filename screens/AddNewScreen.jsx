@@ -112,7 +112,10 @@ const ProfileScreen = () => {
           question: quest.question,
         });
       });
+      Alert.alert("Successfully added question set to Firebase");
+      handleDiscard();
     } catch (e) {
+      Alert.alert("Error adding document: ", e);
       console.error("Error adding document: ", e);
     }
   }
