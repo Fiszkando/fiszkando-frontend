@@ -47,10 +47,10 @@ const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
     newAnswer4correct,
   }) {
     const questionMap = new Map();
-    questionMap.set(1, newAnswer1 != undefined ? newAnswer1 : answer1);
-    questionMap.set(2, newAnswer2 != undefined ? newAnswer2 : answer2);
-    questionMap.set(3, newAnswer3 != undefined ? newAnswer3 : answer3);
-    questionMap.set(4, newAnswer4 != undefined ? newAnswer4 : answer4);
+    questionMap.set("1", newAnswer1 != undefined ? newAnswer1 : answer1);
+    questionMap.set("2", newAnswer2 != undefined ? newAnswer2 : answer2);
+    questionMap.set("3", newAnswer3 != undefined ? newAnswer3 : answer3);
+    questionMap.set("4", newAnswer4 != undefined ? newAnswer4 : answer4);
     const correctAnswers = [];
     if (newAnswer1correct != undefined ? newAnswer1correct : answer1correct) {
       correctAnswers.push(1);

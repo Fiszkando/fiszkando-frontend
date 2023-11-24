@@ -16,11 +16,12 @@ import {
 } from "react-native";
 import { SelectList } from "react-native-dropdown-select-list";
 import { db } from "../firebase";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, addDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import uuid from "react-native-uuid";
 import CreatorStep from "../components/creatorStep";
+import { auth } from "../firebase";
 
 const { height } = Dimensions.get("window");
 const backgroundImg = require("../assets/tlo.png");
@@ -97,9 +98,23 @@ const ProfileScreen = () => {
     setAddQuestionModalVisible(false);
   }
 
-  function handleSave() {
-    console.log("save clicked", title, category, questions);
-    // handleDiscard();
+  async function handleSave() {
+    try {
+      const questionSetRef = await addDoc(collection(db, "question-sets"), {
+        authorId: auth.currentUser.uid,
+        category: category,
+        name: title,
+      });
+      questions.map(async (quest) => {
+        await addDoc(collection(questionSetRef, "questions"), {
+          answers: Object.fromEntries(quest.answers),
+          correctAnswerIndexes: quest.correctAnswerIndexes,
+          question: quest.question,
+        });
+      });
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
   }
 
   const renderItem = ({ item }) => (
