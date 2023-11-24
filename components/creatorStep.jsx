@@ -178,7 +178,10 @@ const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
           <Checkbox
             style={{ margin: 8 }}
             value={answer1correct}
-            onValueChange={setAnswer1Correct}
+            onValueChange={(value) => {
+              setAnswer1Correct(value);
+              onUpdate({ newAnswer1correct: value });
+            }}
             color={answer1correct ? "#2F93BE" : undefined}
           />
         </View>
@@ -196,7 +199,10 @@ const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
           <Checkbox
             style={{ margin: 8 }}
             value={answer2correct}
-            onValueChange={setAnswer2Correct}
+            onValueChange={(value) => {
+              setAnswer2Correct(value);
+              onUpdate({ newAnswer2correct: value });
+            }}
             color={answer2correct ? "#2F93BE" : undefined}
           />
         </View>
@@ -214,7 +220,10 @@ const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
           <Checkbox
             style={{ margin: 8 }}
             value={answer3correct}
-            onValueChange={setAnswer3Correct}
+            onValueChange={(value) => {
+              setAnswer3Correct(value);
+              onUpdate({ newAnswer3correct: value });
+            }}
             color={answer3correct ? "#2F93BE" : undefined}
           />
         </View>
@@ -232,7 +241,10 @@ const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
           <Checkbox
             style={{ margin: 8 }}
             value={answer4correct}
-            onValueChange={setAnswer4Correct}
+            onValueChange={(value) => {
+              setAnswer4Correct(value);
+              onUpdate({ newAnswer4correct: value });
+            }}
             color={answer4correct ? "#2F93BE" : undefined}
           />
         </View>
