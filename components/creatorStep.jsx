@@ -35,7 +35,43 @@ const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
   const questionMarkIcon = require("../assets/question-mark.png");
   const plusIcon = require("../assets/plus.png");
 
-  function onUpdate(question) {}
+  function onUpdate({
+    newQuestion,
+    newAnswer1,
+    newAnswer2,
+    newAnswer3,
+    newAnswer4,
+    newAnswer1correct,
+    newAnswer2correct,
+    newAnswer3correct,
+    newAnswer4correct,
+  }) {
+    const questionMap = new Map();
+    questionMap.set(1, newAnswer1 != undefined ? newAnswer1 : answer1);
+    questionMap.set(2, newAnswer2 != undefined ? newAnswer2 : answer2);
+    questionMap.set(3, newAnswer3 != undefined ? newAnswer3 : answer3);
+    questionMap.set(4, newAnswer4 != undefined ? newAnswer4 : answer4);
+    const correctAnswers = [];
+    if (newAnswer1correct != undefined ? newAnswer1correct : answer1correct) {
+      correctAnswers.push(1);
+    }
+    if (newAnswer2correct != undefined ? newAnswer2correct : answer2correct) {
+      correctAnswers.push(2);
+    }
+    if (newAnswer3correct != undefined ? newAnswer3correct : answer3correct) {
+      correctAnswers.push(3);
+    }
+    if (newAnswer4correct != undefined ? newAnswer4correct : answer4correct) {
+      correctAnswers.push(4);
+    }
+
+    updateFunction({
+      id: id,
+      question: newQuestion != undefined ? newQuestion : question,
+      correctAnswerIndexes: correctAnswers,
+      answers: questionMap,
+    });
+  }
 
   return (
     <View
@@ -120,32 +156,10 @@ const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
           placeholder="Question"
           value={question}
           // Add debounce
+          //create def function!!!
           onChangeText={(newQuestion) => {
             setQuestion(newQuestion);
-            const map = new Map();
-            map.set(1, answer1);
-            map.set(2, answer2);
-            map.set(3, answer3);
-            map.set(4, answer4);
-            const correctAnswers = [];
-            if (answer1correct) {
-              correctAnswers.push(1);
-            }
-            if (answer2correct) {
-              correctAnswers.push(2);
-            }
-            if (answer3correct) {
-              correctAnswers.push(3);
-            }
-            if (answer4correct) {
-              correctAnswers.push(4);
-            }
-            updateFunction({
-              id: id,
-              question: newQuestion,
-              correctAnswerIndexes: correctAnswers,
-              answers: map,
-            });
+            onUpdate({ newQuestion: newQuestion });
           }}
           style={styles.input}
         ></TextInput>
@@ -157,6 +171,7 @@ const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
             value={answer1}
             onChangeText={(text) => {
               setAnswer1(text);
+              onUpdate({ newAnswer1: text });
             }}
             style={styles.input}
           />
@@ -174,6 +189,7 @@ const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
             value={answer2}
             onChangeText={(text) => {
               setAnswer2(text);
+              onUpdate({ newAnswer2: text });
             }}
             style={styles.input}
           />
@@ -191,6 +207,7 @@ const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
             value={answer3}
             onChangeText={(text) => {
               setAnswer3(text);
+              onUpdate({ newAnswer3: text });
             }}
             style={styles.input}
           />
@@ -208,6 +225,7 @@ const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
             value={answer4}
             onChangeText={(text) => {
               setAnswer4(text);
+              onUpdate({ newAnswer4: text });
             }}
             style={styles.input}
           />
@@ -309,7 +327,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "white",
     borderRadius: 20,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: "#2F93BE",
   },
   modalIconBackground: {

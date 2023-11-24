@@ -83,7 +83,6 @@ const ProfileScreen = () => {
   function deleteQuestion(id) {
     const updatedQuestions = questions.filter((item) => item.id !== id);
     setQuestions(updatedQuestions);
-    console.log(questions);
   }
 
   function addQuestion(type) {
