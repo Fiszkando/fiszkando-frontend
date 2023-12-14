@@ -381,7 +381,7 @@ const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
             ></Image>
           )}
           {pickedFile === undefined && (
-            <Text style={{ color: "blue" }}>No file picked</Text>
+            <Text style={{ color: "#2F93BE" }}>No file picked</Text>
           )}
           <Text style={styles.titleText}>Answers</Text>
           <View style={styles.inputRow}>
@@ -493,12 +493,12 @@ const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
             <Text style={{ color: "white" }}>Pick an audio file</Text>
           </TouchableOpacity>
           {pickedFile !== undefined && (
-            <Text style={{ color: "blue" }}>
+            <Text style={{ color: "#2F93BE" }}>
               Picked file: {pickedFile.name}
             </Text>
           )}
           {pickedFile === undefined && (
-            <Text style={{ color: "blue" }}>No file picked</Text>
+            <Text style={{ color: "#2F93BE" }}>No file picked</Text>
           )}
           <Text style={styles.titleText}>Answers</Text>
           <View style={styles.inputRow}>

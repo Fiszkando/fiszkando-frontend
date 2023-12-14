@@ -190,7 +190,7 @@ const ProfileScreen = () => {
           //handle unknown type
         }
       });
-      Alert.alert("Successfully added question set to Firebase");
+      Alert.alert("Successfully uploaded question set!");
       handleDiscard();
     } catch (e) {
       Alert.alert("Error adding document: ", e);
