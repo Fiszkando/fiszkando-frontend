@@ -16,6 +16,7 @@ import { signOut } from "firebase/auth";
 import { Dimensions } from "react-native";
 import { updatePassword, updateProfile, deleteUser } from "firebase/auth";
 import TitleBanner from "../components/TitleBanner";
+import Rate, { AndroidMarket } from 'react-native-rate';
 
 const { height } = Dimensions.get("window");
 const backgroundImg = require("../assets/tlo.png");
@@ -27,6 +28,15 @@ const ProfileScreen = () => {
   const [newUsername, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
+
+  const rateOptions = {
+    GooglePackageName: 'com.test',
+    AppleAppID: '123456789',
+    preferredAndroidMarket: AndroidMarket.Google,
+    preferInApp: false, 
+    openAppStoreIfInAppFails: true,
+    fallbackPlatformURL: 'http://www.test.com',
+  };
 
   useEffect(() => {
     if (auth.currentUser) {
@@ -220,6 +230,18 @@ const ProfileScreen = () => {
               </View>
             </View>
             <View style={styles.cardSectionContainer}>
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  onPress={() => Rate.rate(rateOptions, success => {
+                  if (success) {
+                    // użytkownik został przeniesiony do strony oceny
+                  }
+                })}
+                  style={[styles.button, styles.buttonOutline]}
+                >
+                  <Text style={styles.buttonText}>Oceń naszą aplikację!</Text>
+                </TouchableOpacity>
+              </View>
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   onPress={handleSignOut}
