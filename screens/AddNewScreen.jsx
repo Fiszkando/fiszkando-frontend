@@ -24,6 +24,7 @@ import CreatorStep from "../components/creatorStep";
 import { auth } from "../firebase";
 import { ref, uploadBytes } from "firebase/storage";
 import { storage } from "../firebase";
+import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 
 const { height } = Dimensions.get("window");
 const backgroundImg = require("../assets/tlo.png");
@@ -236,24 +237,15 @@ const ProfileScreen = () => {
             ></TextInput>
           </View>
         </View>
-        <View
+        <KeyboardAwareFlatList
           style={{
             width: "90%",
             height: 0.58 * height,
           }}
-        >
-          <View
-            style={{
-              flex: 1,
-            }}
-          >
-            <FlatList
-              data={questions}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.id}
-            />
-          </View>
-        </View>
+          data={questions}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
         <TouchableOpacity
           onPress={() => {
             setDiscardModalVisible(true);
