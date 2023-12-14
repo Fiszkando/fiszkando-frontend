@@ -1,18 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+
+import { db,auth } from '../firebase';
+import { doc, setDoc, deleteDoc } from 'firebase/firestore';
 
 const { height } = Dimensions.get('window');
 const quizIco = require('../assets/laptop.png'); 
+const starClickedIco = require('../assets/starClicked.png'); 
+const starNotClickedIco = require('../assets/starNotClicked.png'); 
 
+const QuizItem = ({ quiz, onPress, isFavorite }) => {
+  const [favorite, setFavorite] = useState(isFavorite);
 
-const QuizItem = ({ quiz, onPress }) => {
+  const handleFavoritePress = async () => {
+    setFavorite(!favorite);
+    const quizRef = doc(db, 'favorite-sets', quiz.id);
+    
+    if (!favorite) {
+      // Dodaj do ulubionych
+      await setDoc(quizRef, { setId: quiz.id, userId: auth.currentUser.uid });
+    } else {
+      // Usuń z ulubionych
+      await deleteDoc(quizRef);
+    }
+  };
   return (
     <TouchableOpacity onPress={onPress} style={styles.quizBackground}>
       <View style={styles.quizIconBackground}>
         <Image source={quizIco} style={styles.quizIcon} />
       </View>
+
+      <TouchableOpacity onPress={handleFavoritePress} style={styles.starIconBackground}>
+        <Image source={favorite ? starClickedIco : starNotClickedIco} style={styles.starIcon} />
+      </TouchableOpacity>
+
       <Text style={styles.quizAuthor}>{quiz.authorId}</Text>
+      
       <Text style={styles.quizTitle}>{quiz.name}</Text>
+
+      
       <Text style={styles.quizDescription}>{quiz.category}</Text>
     </TouchableOpacity>
   );
@@ -56,10 +82,36 @@ const styles = StyleSheet.create({
   quizIcon: {
     left: '20%',
   },
+  starIconBackground: {
+    width: '16%',
+      height: '34%',
+      backgroundColor: 'white',
+      borderRadius: 100,
+      top: '-12%',
+      right: '5%',
+      justifyContent: 'center',
+      shadowColor: 'black',
+      shadowOffset: {
+        width: 0,
+        height: 10,
+      },
+      shadowOpacity: 0.5,
+      shadowRadius: 12,
+      elevation: 20,
+    position: 'absolute', // Pozycjonowanie absolutne
+    
+  },
+  starIcon: {
+    width: '80%', // Szerokość ikony gwiazdy
+    height: '80%', // Wysokość ikony gwiazdy
+    left: '10%',
+  },
+  
+  
   quizAuthor: {
     fontStyle: 'italic',
     top: -40,
-    textAlign: 'right',
+    textAlign: 'center',
     paddingRight: '5%',
     fontSize: 12,
   },
@@ -67,11 +119,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#2F93BE',
     fontWeight: 'bold',
-    top: -30,
+    top: -15,
     left: 30,
   },
   quizDescription: {
-    top: -20,
+    top: -10,
     marginLeft: 50,
   }
 });

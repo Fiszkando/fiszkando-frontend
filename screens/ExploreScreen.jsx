@@ -2,7 +2,7 @@ import { ScrollView, ImageBackground, Image, TextInput, StyleSheet, Text, Toucha
 import React, { useState, useEffect } from 'react';
 import { db, auth } from '../firebase';
 import { signOut } from 'firebase/auth';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot, query, where, getDoc, doc} from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 import {Dimensions} from 'react-native'; 
 import TitleBanner from "../components/TitleBanner";
@@ -15,9 +15,10 @@ const searchImg = require('../assets/search.png');
 const ExploreScreen = () => {
 
   const [quizzes, setQuizzes] = useState([]);
+  const [myFavoriteQuizzes, setmyFavoriteMyQuizzes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
-
+  const userID = auth.currentUser.uid;
   const navigation = useNavigation();
 
   const handleSignOut = () => {
@@ -66,20 +67,42 @@ const ExploreScreen = () => {
 
   useEffect(() => {
     setLoading(true);
-    var questionSets = collection(db, 'question-sets');
-    onSnapshot(questionSets, (snapshot) => {
-      let quizzesList = [];
-      snapshot.docs.map((doc) => quizzesList.push({...doc.data(), id: doc.id}));
+    
+    const questionSetsQuery = query(collection(db, 'question-sets'));
+    const favSetsQuery = query(collection(db, 'favorite-sets'), where('userId', '==', userID));
+  
+    
+    const getQuizzes = onSnapshot(questionSetsQuery, (snapshot) => {
+      let quizzesList = snapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
       setQuizzes(quizzesList);
+    });
+  
+    
+    const getFavorites = onSnapshot(favSetsQuery, (snapshot) => {
+      const favSetsIds = snapshot.docs.map((doc) => doc.data().setId);
+      setmyFavoriteMyQuizzes(favSetsIds);
+    });
+  
+    Promise.all([getQuizzes, getFavorites]).then(() => {
       setLoading(false);
-    })
-  }, [])
+    });
+  
+    return () => {
+      getQuizzes(); 
+      getFavorites(); 
+    };
+  }, [userID]); 
+  
   
   const renderItem = ({item}) => {
+    const isFavorite = myFavoriteQuizzes.includes(item.id);
+    //console.log(myFavoriteQuizzes)
+    //console.log(isFavorite)
     return (
       <QuizItem 
       quiz={item} 
       onPress={() => handleStartQuiz(item.id)} 
+      isFavorite={isFavorite}
     />
     );
   }
