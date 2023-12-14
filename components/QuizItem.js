@@ -34,7 +34,7 @@ const QuizItem = ({ quiz, onPress, isFavorite }) => {
         <Image source={favorite ? starClickedIco : starNotClickedIco} style={styles.starIcon} />
       </TouchableOpacity>
 
-      <Text style={styles.quizAuthor}>{quiz.authorId}</Text>
+      {/* <Text style={styles.quizAuthor}>{quiz.authorId}</Text> */}
       
       <Text style={styles.quizTitle}>{quiz.name}</Text>
 
@@ -119,11 +119,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#2F93BE',
     fontWeight: 'bold',
-    top: -30,
+    top: -15,
     left: 30,
   },
   quizDescription: {
-    top: -20,
+    top: -10,
     marginLeft: 50,
   }
 });
