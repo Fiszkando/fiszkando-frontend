@@ -28,8 +28,8 @@ const ExploreScreen = () => {
     })
   }
 
-  const handleStartQuiz = () => {
-    //todo go to quiz start
+  const handleStartQuiz = (id, name) => {
+    navigation.navigate('Root', { screen: 'StartQuiz', params: { quizId: id, quizName: name }});
   }
 
   const handleSearch = () => {
@@ -79,7 +79,7 @@ const ExploreScreen = () => {
     return (
       <QuizItem 
       quiz={item} 
-      onPress={() => handleStartQuiz(item.id)} 
+      onPress={() => handleStartQuiz(item.id, item.name)} 
     />
     );
   }
