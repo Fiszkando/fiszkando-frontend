@@ -24,6 +24,7 @@ import CreatorStep from "../components/creatorStep";
 import { auth } from "../firebase";
 import { ref, uploadBytes } from "firebase/storage";
 import { storage } from "../firebase";
+import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 
 const { height } = Dimensions.get("window");
 const backgroundImg = require("../assets/tlo.png");
@@ -207,7 +208,7 @@ const ProfileScreen = () => {
   );
 
   return (
-    <SafeAreaView
+    <View
       style={[
         styles.container,
         {
@@ -224,7 +225,7 @@ const ProfileScreen = () => {
       <ImageBackground
         source={backgroundImg}
         resizeMode="cover"
-        style={styles.image}
+        style={[styles.image, { paddingTop: 50 }]}
       >
         <View style={styles.titleBackground}>
           <View style={styles.innerTitleBackground}>
@@ -236,24 +237,15 @@ const ProfileScreen = () => {
             ></TextInput>
           </View>
         </View>
-        <View
+        <KeyboardAwareFlatList
           style={{
             width: "90%",
             height: 0.58 * height,
           }}
-        >
-          <View
-            style={{
-              flex: 1,
-            }}
-          >
-            <FlatList
-              data={questions}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.id}
-            />
-          </View>
-        </View>
+          data={questions}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
         <TouchableOpacity
           onPress={() => {
             setDiscardModalVisible(true);
@@ -261,7 +253,7 @@ const ProfileScreen = () => {
           style={[
             styles.button,
             styles.buttonOutline,
-            { position: "absolute", top: 20, left: 10, borderWidth: 0 },
+            { position: "absolute", top: 60, left: 10, borderWidth: 0 },
           ]}
         >
           <Text style={styles.buttonText}>Discard</Text>
@@ -271,7 +263,7 @@ const ProfileScreen = () => {
           style={[
             styles.button,
             styles.buttonOutline,
-            { position: "absolute", top: 20, right: 10, borderWidth: 0 },
+            { position: "absolute", top: 60, right: 10, borderWidth: 0 },
           ]}
         >
           <Text style={styles.buttonText}>Save</Text>
@@ -426,6 +418,21 @@ const ProfileScreen = () => {
                   activeOpacity={1}
                 >
                   <TouchableOpacity
+                    style={styles.modalCloseWrapper}
+                    onPress={() => {
+                      setAddQuestionModalVisible(false);
+                    }}
+                  >
+                    <Image
+                      source={plusIcon}
+                      style={{
+                        transform: "rotate(45deg)",
+                        width: 20,
+                        height: 20,
+                      }}
+                    ></Image>
+                  </TouchableOpacity>
+                  <TouchableOpacity
                     style={[styles.button, { width: "80%" }]}
                     onPress={() => addQuestion("multichoice")}
                   >
@@ -509,7 +516,7 @@ const ProfileScreen = () => {
           <Image source={plusIcon}></Image>
         </TouchableOpacity>
       </ImageBackground>
-    </SafeAreaView>
+    </View>
   );
 };
 export default ProfileScreen;

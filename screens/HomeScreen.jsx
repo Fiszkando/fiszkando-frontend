@@ -75,10 +75,12 @@ const HomeScreen = () => {
   }, [])
 
   const renderItem = ({ item }) => {
+    const isFavorite = myFavoriteQuizzes.some(favQuiz => favQuiz.id === item.id)
     return (
       <QuizItem 
       quiz={item} 
       onPress={() => handleStartQuiz(item.id)} 
+      isFavorite={isFavorite}
     />
     );
   }

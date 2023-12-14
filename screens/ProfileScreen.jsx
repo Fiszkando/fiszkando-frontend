@@ -7,6 +7,7 @@ import {
   ImageBackground,
   View,
   Image,
+  Modal,
   KeyboardAvoidingView,
   Alert,
 } from "react-native";
@@ -23,10 +24,19 @@ const saveIcon = require("../assets/diskette.png");
 const deleteIcon = require("../assets/bin.png");
 
 const ProfileScreen = () => {
+  const [discardModalVisible, setDiscardModalVisible] = useState(false);
+
   const [username, setUsername] = useState("");
   const [newUsername, setNewUsername] = useState("");
+  const [newUsernameError, setNewUsernameError] = useState("");
+  const [newUsernameSuccess, setNewUsernameSuccess] = useState("");
+
   const [newPassword, setNewPassword] = useState("");
+  const [newPasswordError, setNewPasswordError] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [confirmNewPasswordError, setConfirmNewPasswordError] = useState("");
+
+  const [passwordChangeSuccess, setPasswordChangeSuccess] = useState("");
 
   useEffect(() => {
     if (auth.currentUser) {
@@ -44,32 +54,43 @@ const ProfileScreen = () => {
   };
 
   const handleUpdateDisplayName = () => {
+    //clear all messages
+    setNewUsernameError("");
+    setNewUsernameSuccess("");
     if (newUsername.length < 1) {
-      Alert.alert("Enter valid username");
+      setNewUsernameError("Enter valid username");
+      return;
     }
 
     updateProfile(auth.currentUser, {
       displayName: newUsername,
     })
       .then(() => {
-        Alert.alert("Username updated.");
         setUsername(newUsername);
+        setNewUsernameSuccess("Username updated.");
       })
       .catch((error) => {
-        Alert.alert("An error occured while changing username");
+        setNewUsernameError("An error occured while changing username");
       });
   };
 
   const handleUpdatePassword = () => {
-    if (newPassword.length === 0 || confirmNewPassword.length === 0) {
-      Alert.alert("Invalid input", "Please fill out empty fields");
+    //clear all messages
+    setNewPasswordError("");
+    setConfirmNewPasswordError("");
+    setPasswordChangeSuccess("");
+
+    if (newPassword.length === 0) {
+      setNewPasswordError("Password can't be blank");
+      if (confirmNewPassword.length === 0) {
+        setConfirmNewPasswordError("Password can't be blank");
+      }
       return;
     }
 
     if (newPassword !== confirmNewPassword) {
-      Alert.alert("Invalid password", "Passwords don't match!");
-      setNewPassword("");
-      setConfirmNewPassword("");
+      setNewPasswordError("Passwords don't match");
+      setConfirmNewPasswordError("Passwords don't match");
       return;
     }
 
@@ -77,12 +98,14 @@ const ProfileScreen = () => {
       .then(() => {
         setNewPassword("");
         setConfirmNewPassword("");
-        Alert.alert("Pasword updated successfully");
+        setPasswordChangeSuccess("Password updated successfully");
       })
       .catch((error) => {
         //if error === specific (time logged in too long, user get alerted to re-login - log him/her out, in the future use reauthenticateWithCredential)
         //read https://firebase.google.com/docs/auth/web/manage-users?hl=pl#re-authenticate_a_user
-        Alert.alert("An error occured while changing password");
+        setConfirmNewPasswordError(
+          "An error occured while changing password. Try logging in again."
+        );
       });
   };
 
@@ -102,7 +125,14 @@ const ProfileScreen = () => {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[
+        styles.container,
+        {
+          opacity: discardModalVisible
+            ? 0.4 //if modal visible apply reduced opacity
+            : 1,
+        },
+      ]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       {/* TODO: think about changing to SafeAreaView as the general container (adds padding for devices with notch) */}
@@ -133,6 +163,11 @@ const ProfileScreen = () => {
                       style={styles.input}
                       secureTextEntry
                     ></TextInput>
+                    {newPasswordError && (
+                      <Text style={styles.errorMessage}>
+                        {newPasswordError}
+                      </Text>
+                    )}
                     <TextInput
                       placeholderTextColor="white"
                       placeholder="Re-enter new password"
@@ -141,6 +176,16 @@ const ProfileScreen = () => {
                       style={styles.input}
                       secureTextEntry
                     ></TextInput>
+                    {confirmNewPasswordError && (
+                      <Text style={styles.errorMessage}>
+                        {confirmNewPasswordError}
+                      </Text>
+                    )}
+                    {passwordChangeSuccess && (
+                      <Text style={styles.successMessage}>
+                        {passwordChangeSuccess}
+                      </Text>
+                    )}
                   </View>
                 </View>
               </View>
@@ -183,6 +228,16 @@ const ProfileScreen = () => {
                       value={newUsername}
                       onChangeText={(text) => setNewUsername(text)}
                     ></TextInput>
+                    {newUsernameError && (
+                      <Text style={styles.errorMessage}>
+                        {newUsernameError}
+                      </Text>
+                    )}
+                    {newUsernameSuccess && (
+                      <Text style={styles.successMessage}>
+                        {newUsernameSuccess}
+                      </Text>
+                    )}
                   </View>
                 </View>
               </View>
@@ -212,7 +267,7 @@ const ProfileScreen = () => {
               </View>
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
-                  onPress={handleDeleteUser}
+                  onPress={() => setDiscardModalVisible(true)}
                   style={[styles.button, styles.buttonOutline]}
                 >
                   <Text style={styles.buttonText}>Delete account</Text>
@@ -231,6 +286,56 @@ const ProfileScreen = () => {
             </View>
           </ScrollView>
         </View>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={discardModalVisible}
+          onRequestClose={() => {
+            setDiscardModalVisible(!discardModalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <TouchableOpacity
+              style={styles.modalContainer}
+              onPress={() => setDiscardModalVisible(false)}
+            >
+              <TouchableOpacity
+                style={styles.modalBackground}
+                activeOpacity={1}
+              >
+                <Text
+                  style={{
+                    fontSize: 20,
+                    color: "#2F93BE",
+                    width: "90%",
+                    marginBottom: 16,
+                    textAlign: "center",
+                  }}
+                >
+                  Do you really want to delete your user? This operation{"\n"}
+                  <Text style={{ fontWeight: "bold" }}>cannot</Text> be undone.
+                </Text>
+                <View style={[{ flexDirection: "row", gap: 15 }]}>
+                  <TouchableOpacity
+                    style={[
+                      styles.button,
+                      { backgroundColor: "red", width: "30%" },
+                    ]}
+                    onPress={() => handleDeleteUser()}
+                  >
+                    <Text style={{ color: "white" }}>Discard</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, { width: "30%" }]}
+                    onPress={() => setDiscardModalVisible(false)}
+                  >
+                    <Text style={{ color: "white" }}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
+        </Modal>
       </ImageBackground>
     </KeyboardAvoidingView>
   );
@@ -349,5 +454,54 @@ const styles = StyleSheet.create({
     color: "black",
     fontWeight: "700",
     fontSize: 16,
+  },
+  errorMessage: {
+    color: "red",
+  },
+  successMessage: {
+    color: "green",
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalBackground: {
+    height: 0.4 * height,
+    width: 0.4 * height,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
+    borderRadius: 20,
+    gap: 10,
+  },
+  modalIconBackground: {
+    position: "absolute",
+    top: -24,
+    left: 24,
+    backgroundColor: "#F5F5F5",
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 50,
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 12,
+    elevation: 20,
+  },
+  modalCloseWrapper: {
+    position: "absolute",
+    top: 16,
+    right: 16,
   },
 });

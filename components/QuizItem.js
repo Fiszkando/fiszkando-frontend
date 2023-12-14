@@ -34,7 +34,7 @@ const QuizItem = ({ quiz, onPress, isFavorite }) => {
         <Image source={favorite ? starClickedIco : starNotClickedIco} style={styles.starIcon} />
       </TouchableOpacity>
 
-      {/* <Text style={styles.quizAuthor}>{quiz.authorId}</Text> */}
+      <Text style={styles.quizAuthor}>{quiz.authorId}</Text>
       
       <Text style={styles.quizTitle}>{quiz.name}</Text>
 
