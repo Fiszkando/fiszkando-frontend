@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   Text,
   View,
+  Button,
   StyleSheet,
   TextInput,
   Image,
@@ -11,6 +12,8 @@ import {
   Dimensions,
 } from "react-native";
 import Checkbox from "expo-checkbox";
+import * as DocumentPicker from "expo-document-picker";
+import * as ImagePicker from "expo-image-picker";
 
 //for now questions are:
 //answers: map (with keys 1-4)
@@ -21,6 +24,8 @@ const { height } = Dimensions.get("window");
 
 const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
   const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
+  const [fileURL, setFileURL] = useState("");
   const [answer1, setAnswer1] = useState("");
   const [answer2, setAnswer2] = useState("");
   const [answer3, setAnswer3] = useState("");
@@ -34,9 +39,11 @@ const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
 
   const questionMarkIcon = require("../assets/question-mark.png");
   const plusIcon = require("../assets/plus.png");
+  const [pickedFile, setPickedFile] = useState();
 
   function onUpdate({
     newQuestion,
+    newAnswer,
     newAnswer1,
     newAnswer2,
     newAnswer3,
@@ -45,32 +52,93 @@ const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
     newAnswer2correct,
     newAnswer3correct,
     newAnswer4correct,
+    newFileURL,
   }) {
-    const questionMap = new Map();
-    questionMap.set("1", newAnswer1 != undefined ? newAnswer1 : answer1);
-    questionMap.set("2", newAnswer2 != undefined ? newAnswer2 : answer2);
-    questionMap.set("3", newAnswer3 != undefined ? newAnswer3 : answer3);
-    questionMap.set("4", newAnswer4 != undefined ? newAnswer4 : answer4);
-    const correctAnswers = [];
-    if (newAnswer1correct != undefined ? newAnswer1correct : answer1correct) {
-      correctAnswers.push(1);
-    }
-    if (newAnswer2correct != undefined ? newAnswer2correct : answer2correct) {
-      correctAnswers.push(2);
-    }
-    if (newAnswer3correct != undefined ? newAnswer3correct : answer3correct) {
-      correctAnswers.push(3);
-    }
-    if (newAnswer4correct != undefined ? newAnswer4correct : answer4correct) {
-      correctAnswers.push(4);
-    }
+    if (type === "multichoice") {
+      const questionMap = new Map();
+      questionMap.set("1", newAnswer1 != undefined ? newAnswer1 : answer1);
+      questionMap.set("2", newAnswer2 != undefined ? newAnswer2 : answer2);
+      questionMap.set("3", newAnswer3 != undefined ? newAnswer3 : answer3);
+      questionMap.set("4", newAnswer4 != undefined ? newAnswer4 : answer4);
+      const correctAnswers = [];
+      if (newAnswer1correct != undefined ? newAnswer1correct : answer1correct) {
+        correctAnswers.push(1);
+      }
+      if (newAnswer2correct != undefined ? newAnswer2correct : answer2correct) {
+        correctAnswers.push(2);
+      }
+      if (newAnswer3correct != undefined ? newAnswer3correct : answer3correct) {
+        correctAnswers.push(3);
+      }
+      if (newAnswer4correct != undefined ? newAnswer4correct : answer4correct) {
+        correctAnswers.push(4);
+      }
 
-    updateFunction({
-      id: id,
-      question: newQuestion != undefined ? newQuestion : question,
-      correctAnswerIndexes: correctAnswers,
-      answers: questionMap,
+      updateFunction({
+        id: id,
+        question: newQuestion != undefined ? newQuestion : question,
+        correctAnswerIndexes: correctAnswers,
+        answers: questionMap,
+      });
+    } else if (type === "image" || type === "audio") {
+      const questionMap = new Map();
+      questionMap.set("1", newAnswer1 != undefined ? newAnswer1 : answer1);
+      questionMap.set("2", newAnswer2 != undefined ? newAnswer2 : answer2);
+      questionMap.set("3", newAnswer3 != undefined ? newAnswer3 : answer3);
+      questionMap.set("4", newAnswer4 != undefined ? newAnswer4 : answer4);
+      const correctAnswers = [];
+      if (newAnswer1correct != undefined ? newAnswer1correct : answer1correct) {
+        correctAnswers.push(1);
+      }
+      if (newAnswer2correct != undefined ? newAnswer2correct : answer2correct) {
+        correctAnswers.push(2);
+      }
+      if (newAnswer3correct != undefined ? newAnswer3correct : answer3correct) {
+        correctAnswers.push(3);
+      }
+      if (newAnswer4correct != undefined ? newAnswer4correct : answer4correct) {
+        correctAnswers.push(4);
+      }
+
+      updateFunction({
+        id: id,
+        question: newQuestion != undefined ? newQuestion : question,
+        correctAnswerIndexes: correctAnswers,
+        answers: questionMap,
+        fileURL: newFileURL != undefined ? newFileURL : fileURL,
+      });
+    } else if (type === "flashcard") {
+      updateFunction({
+        id: id,
+        question: newQuestion != undefined ? newQuestion : question,
+        answer: newAnswer != undefined ? newAnswer : answer,
+      });
+    } else {
+      //handle error or nothing i guess
+    }
+  }
+
+  async function pickDocument() {
+    let result = await DocumentPicker.getDocumentAsync({ type: "audio/*" });
+    if (result.canceled === false) {
+      setPickedFile(result.assets[0]);
+      setFileURL(result.assets[0].uri);
+      onUpdate({ newFileURL: result.assets[0].uri });
+    }
+  }
+
+  async function pickImage() {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      aspect: [4, 3],
+      quality: 1,
     });
+    if (result.canceled === false) {
+      console.log(result.assets[0].uri);
+      setPickedFile(result.assets[0]);
+      setFileURL(result.assets[0].uri);
+      onUpdate({ newFileURL: result.assets[0].uri });
+    }
   }
 
   return (
@@ -149,106 +217,376 @@ const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
           </TouchableOpacity>
         </View>
       </Modal>
-      <View style={styles.inputGroup}>
-        <Text style={styles.titleText}>Question</Text>
-        <TextInput
-          placeholderTextColor="white"
-          placeholder="Question"
-          value={question}
-          // Add debounce
-          //create def function!!!
-          onChangeText={(newQuestion) => {
-            setQuestion(newQuestion);
-            onUpdate({ newQuestion: newQuestion });
-          }}
-          style={styles.input}
-        ></TextInput>
-        <Text style={styles.titleText}>Answers</Text>
-        <View style={styles.inputRow}>
+      {type === "multichoice" && (
+        <View style={styles.inputGroup}>
+          <Text style={styles.titleText}>Question</Text>
           <TextInput
             placeholderTextColor="white"
-            placeholder="Answer 1"
-            value={answer1}
-            onChangeText={(text) => {
-              setAnswer1(text);
-              onUpdate({ newAnswer1: text });
+            placeholder="Question"
+            value={question}
+            // Add debounce
+            //create def function!!!
+            onChangeText={(newQuestion) => {
+              setQuestion(newQuestion);
+              onUpdate({ newQuestion: newQuestion });
             }}
             style={styles.input}
-          />
-          <Checkbox
-            style={{ margin: 8 }}
-            value={answer1correct}
-            onValueChange={(value) => {
-              setAnswer1Correct(value);
-              onUpdate({ newAnswer1correct: value });
-            }}
-            color={answer1correct ? "#2F93BE" : undefined}
-          />
+          ></TextInput>
+          <Text style={styles.titleText}>Answers</Text>
+          <View style={styles.inputRow}>
+            <TextInput
+              placeholderTextColor="white"
+              placeholder="Answer 1"
+              value={answer1}
+              onChangeText={(text) => {
+                setAnswer1(text);
+                onUpdate({ newAnswer1: text });
+              }}
+              style={styles.input}
+            />
+            <Checkbox
+              style={{ margin: 8 }}
+              value={answer1correct}
+              onValueChange={(value) => {
+                setAnswer1Correct(value);
+                onUpdate({ newAnswer1correct: value });
+              }}
+              color={answer1correct ? "#2F93BE" : undefined}
+            />
+          </View>
+          <View style={styles.inputRow}>
+            <TextInput
+              placeholderTextColor="white"
+              placeholder="Answer 2"
+              value={answer2}
+              onChangeText={(text) => {
+                setAnswer2(text);
+                onUpdate({ newAnswer2: text });
+              }}
+              style={styles.input}
+            />
+            <Checkbox
+              style={{ margin: 8 }}
+              value={answer2correct}
+              onValueChange={(value) => {
+                setAnswer2Correct(value);
+                onUpdate({ newAnswer2correct: value });
+              }}
+              color={answer2correct ? "#2F93BE" : undefined}
+            />
+          </View>
+          <View style={styles.inputRow}>
+            <TextInput
+              placeholderTextColor="white"
+              placeholder="Answer 3"
+              value={answer3}
+              onChangeText={(text) => {
+                setAnswer3(text);
+                onUpdate({ newAnswer3: text });
+              }}
+              style={styles.input}
+            />
+            <Checkbox
+              style={{ margin: 8 }}
+              value={answer3correct}
+              onValueChange={(value) => {
+                setAnswer3Correct(value);
+                onUpdate({ newAnswer3correct: value });
+              }}
+              color={answer3correct ? "#2F93BE" : undefined}
+            />
+          </View>
+          <View style={styles.inputRow}>
+            <TextInput
+              placeholderTextColor="white"
+              placeholder="Answer 4"
+              value={answer4}
+              onChangeText={(text) => {
+                setAnswer4(text);
+                onUpdate({ newAnswer4: text });
+              }}
+              style={styles.input}
+            />
+            <Checkbox
+              style={{ margin: 8 }}
+              value={answer4correct}
+              onValueChange={(value) => {
+                setAnswer4Correct(value);
+                onUpdate({ newAnswer4correct: value });
+              }}
+              color={answer4correct ? "#2F93BE" : undefined}
+            />
+          </View>
         </View>
-        <View style={styles.inputRow}>
+      )}
+      {type === "flashcard" && (
+        <View style={styles.inputGroup}>
+          <Text style={styles.titleText}>Flashcard Question</Text>
           <TextInput
             placeholderTextColor="white"
-            placeholder="Answer 2"
-            value={answer2}
-            onChangeText={(text) => {
-              setAnswer2(text);
-              onUpdate({ newAnswer2: text });
+            placeholder="Question"
+            value={question}
+            // Add debounce
+            //create def function!!!
+            onChangeText={(newQuestion) => {
+              setQuestion(newQuestion);
+              onUpdate({ newQuestion: newQuestion });
             }}
             style={styles.input}
-          />
-          <Checkbox
-            style={{ margin: 8 }}
-            value={answer2correct}
-            onValueChange={(value) => {
-              setAnswer2Correct(value);
-              onUpdate({ newAnswer2correct: value });
-            }}
-            color={answer2correct ? "#2F93BE" : undefined}
-          />
+          ></TextInput>
+          <Text style={styles.titleText}>Answer</Text>
+          <View style={styles.inputRow}>
+            <TextInput
+              placeholderTextColor="white"
+              placeholder="Answer"
+              value={answer}
+              onChangeText={(text) => {
+                setAnswer(text);
+                onUpdate({ newAnswer: text });
+              }}
+              style={[styles.input, { width: "100%" }]}
+            />
+          </View>
         </View>
-        <View style={styles.inputRow}>
+      )}
+      {type === "image" && (
+        <View style={styles.inputGroup}>
+          <Text style={styles.titleText}>Image Question</Text>
           <TextInput
             placeholderTextColor="white"
-            placeholder="Answer 3"
-            value={answer3}
-            onChangeText={(text) => {
-              setAnswer3(text);
-              onUpdate({ newAnswer3: text });
+            placeholder="Question"
+            value={question}
+            // Add debounce
+            //create def function!!!
+            onChangeText={(newQuestion) => {
+              setQuestion(newQuestion);
+              onUpdate({ newQuestion: newQuestion });
             }}
             style={styles.input}
-          />
-          <Checkbox
-            style={{ margin: 8 }}
-            value={answer3correct}
-            onValueChange={(value) => {
-              setAnswer3Correct(value);
-              onUpdate({ newAnswer3correct: value });
-            }}
-            color={answer3correct ? "#2F93BE" : undefined}
-          />
+          ></TextInput>
+          <TouchableOpacity
+            style={[styles.button, { width: "60%" }]}
+            title="Select Document"
+            onPress={() => pickImage()}
+          >
+            <Text style={{ color: "white" }}>Pick a photo</Text>
+          </TouchableOpacity>
+          {pickedFile !== undefined && (
+            <Image
+              source={{ uri: pickedFile.uri }}
+              style={{
+                width: 200,
+                height: 200,
+              }}
+            ></Image>
+          )}
+          {pickedFile === undefined && (
+            <Text style={{ color: "blue" }}>No file picked</Text>
+          )}
+          <Text style={styles.titleText}>Answers</Text>
+          <View style={styles.inputRow}>
+            <TextInput
+              placeholderTextColor="white"
+              placeholder="Answer 1"
+              value={answer1}
+              onChangeText={(text) => {
+                setAnswer1(text);
+                onUpdate({ newAnswer1: text });
+              }}
+              style={styles.input}
+            />
+            <Checkbox
+              style={{ margin: 8 }}
+              value={answer1correct}
+              onValueChange={(value) => {
+                setAnswer1Correct(value);
+                onUpdate({ newAnswer1correct: value });
+              }}
+              color={answer1correct ? "#2F93BE" : undefined}
+            />
+          </View>
+          <View style={styles.inputRow}>
+            <TextInput
+              placeholderTextColor="white"
+              placeholder="Answer 2"
+              value={answer2}
+              onChangeText={(text) => {
+                setAnswer2(text);
+                onUpdate({ newAnswer2: text });
+              }}
+              style={styles.input}
+            />
+            <Checkbox
+              style={{ margin: 8 }}
+              value={answer2correct}
+              onValueChange={(value) => {
+                setAnswer2Correct(value);
+                onUpdate({ newAnswer2correct: value });
+              }}
+              color={answer2correct ? "#2F93BE" : undefined}
+            />
+          </View>
+          <View style={styles.inputRow}>
+            <TextInput
+              placeholderTextColor="white"
+              placeholder="Answer 3"
+              value={answer3}
+              onChangeText={(text) => {
+                setAnswer3(text);
+                onUpdate({ newAnswer3: text });
+              }}
+              style={styles.input}
+            />
+            <Checkbox
+              style={{ margin: 8 }}
+              value={answer3correct}
+              onValueChange={(value) => {
+                setAnswer3Correct(value);
+                onUpdate({ newAnswer3correct: value });
+              }}
+              color={answer3correct ? "#2F93BE" : undefined}
+            />
+          </View>
+          <View style={styles.inputRow}>
+            <TextInput
+              placeholderTextColor="white"
+              placeholder="Answer 4"
+              value={answer4}
+              onChangeText={(text) => {
+                setAnswer4(text);
+                onUpdate({ newAnswer4: text });
+              }}
+              style={styles.input}
+            />
+            <Checkbox
+              style={{ margin: 8 }}
+              value={answer4correct}
+              onValueChange={(value) => {
+                setAnswer4Correct(value);
+                onUpdate({ newAnswer4correct: value });
+              }}
+              color={answer4correct ? "#2F93BE" : undefined}
+            />
+          </View>
         </View>
-        <View style={styles.inputRow}>
+      )}
+      {type === "audio" && (
+        <View style={styles.inputGroup}>
+          <Text style={styles.titleText}>Audio Question</Text>
           <TextInput
             placeholderTextColor="white"
-            placeholder="Answer 4"
-            value={answer4}
-            onChangeText={(text) => {
-              setAnswer4(text);
-              onUpdate({ newAnswer4: text });
+            placeholder="Question"
+            value={question}
+            // Add debounce
+            //create def function!!!
+            onChangeText={(newQuestion) => {
+              setQuestion(newQuestion);
+              onUpdate({ newQuestion: newQuestion });
             }}
             style={styles.input}
-          />
-          <Checkbox
-            style={{ margin: 8 }}
-            value={answer4correct}
-            onValueChange={(value) => {
-              setAnswer4Correct(value);
-              onUpdate({ newAnswer4correct: value });
-            }}
-            color={answer4correct ? "#2F93BE" : undefined}
-          />
+          ></TextInput>
+          <TouchableOpacity
+            style={[styles.button, { width: "60%" }]}
+            title="Select Document"
+            onPress={() => pickDocument()}
+          >
+            <Text style={{ color: "white" }}>Pick an audio file</Text>
+          </TouchableOpacity>
+          {pickedFile !== undefined && (
+            <Text style={{ color: "blue" }}>
+              Picked file: {pickedFile.name}
+            </Text>
+          )}
+          {pickedFile === undefined && (
+            <Text style={{ color: "blue" }}>No file picked</Text>
+          )}
+          <Text style={styles.titleText}>Answers</Text>
+          <View style={styles.inputRow}>
+            <TextInput
+              placeholderTextColor="white"
+              placeholder="Answer 1"
+              value={answer1}
+              onChangeText={(text) => {
+                setAnswer1(text);
+                onUpdate({ newAnswer1: text });
+              }}
+              style={styles.input}
+            />
+            <Checkbox
+              style={{ margin: 8 }}
+              value={answer1correct}
+              onValueChange={(value) => {
+                setAnswer1Correct(value);
+                onUpdate({ newAnswer1correct: value });
+              }}
+              color={answer1correct ? "#2F93BE" : undefined}
+            />
+          </View>
+          <View style={styles.inputRow}>
+            <TextInput
+              placeholderTextColor="white"
+              placeholder="Answer 2"
+              value={answer2}
+              onChangeText={(text) => {
+                setAnswer2(text);
+                onUpdate({ newAnswer2: text });
+              }}
+              style={styles.input}
+            />
+            <Checkbox
+              style={{ margin: 8 }}
+              value={answer2correct}
+              onValueChange={(value) => {
+                setAnswer2Correct(value);
+                onUpdate({ newAnswer2correct: value });
+              }}
+              color={answer2correct ? "#2F93BE" : undefined}
+            />
+          </View>
+          <View style={styles.inputRow}>
+            <TextInput
+              placeholderTextColor="white"
+              placeholder="Answer 3"
+              value={answer3}
+              onChangeText={(text) => {
+                setAnswer3(text);
+                onUpdate({ newAnswer3: text });
+              }}
+              style={styles.input}
+            />
+            <Checkbox
+              style={{ margin: 8 }}
+              value={answer3correct}
+              onValueChange={(value) => {
+                setAnswer3Correct(value);
+                onUpdate({ newAnswer3correct: value });
+              }}
+              color={answer3correct ? "#2F93BE" : undefined}
+            />
+          </View>
+          <View style={styles.inputRow}>
+            <TextInput
+              placeholderTextColor="white"
+              placeholder="Answer 4"
+              value={answer4}
+              onChangeText={(text) => {
+                setAnswer4(text);
+                onUpdate({ newAnswer4: text });
+              }}
+              style={styles.input}
+            />
+            <Checkbox
+              style={{ margin: 8 }}
+              value={answer4correct}
+              onValueChange={(value) => {
+                setAnswer4Correct(value);
+                onUpdate({ newAnswer4correct: value });
+              }}
+              color={answer4correct ? "#2F93BE" : undefined}
+            />
+          </View>
         </View>
-      </View>
+      )}
     </View>
   );
 };

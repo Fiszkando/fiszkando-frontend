@@ -22,6 +22,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import uuid from "react-native-uuid";
 import CreatorStep from "../components/creatorStep";
 import { auth } from "../firebase";
+import { ref, uploadBytes } from "firebase/storage";
+import { storage } from "../firebase";
 
 const { height } = Dimensions.get("window");
 const backgroundImg = require("../assets/tlo.png");
@@ -65,15 +67,41 @@ const ProfileScreen = () => {
     setDiscardModalVisible(false);
   }
 
-  function updateQuestion({ id, question, answers, correctAnswerIndexes }) {
+  function updateQuestion({
+    id,
+    question,
+    answer,
+    answers,
+    correctAnswerIndexes,
+    fileURL,
+  }) {
     const updatedQuestions = questions.map((item) => {
       if (item.id === id) {
-        return {
-          ...item,
-          question: question,
-          answers: answers,
-          correctAnswerIndexes: correctAnswerIndexes,
-        };
+        if (item.type === "multichoice") {
+          return {
+            ...item,
+            question: question,
+            answers: answers,
+            correctAnswerIndexes: correctAnswerIndexes,
+          };
+        } else if (item.type === "flashcard") {
+          return {
+            ...item,
+            question: question,
+            answer: answer,
+          };
+        } else if (item.type === "image" || item.type === "audio") {
+          return {
+            ...item,
+            question: question,
+            answers: answers,
+            correctAnswerIndexes: correctAnswerIndexes,
+            fileURL: fileURL,
+          };
+        } else {
+          //TODO: maybe handle error
+          return item;
+        }
       } else {
         return item;
       }
@@ -88,14 +116,36 @@ const ProfileScreen = () => {
 
   function addQuestion(type) {
     console.log(type);
-    questions.push({
-      type: type,
-      id: uuid.v4(),
-      question: "",
-      answers: {},
-      correctAnswerIndexes: [],
-    });
-    setAddQuestionModalVisible(false);
+    if (type === "multichoice") {
+      questions.push({
+        type: type,
+        id: uuid.v4(),
+        question: "",
+        answers: {},
+        correctAnswerIndexes: [],
+      });
+      setAddQuestionModalVisible(false);
+    } else if (type === "flashcard") {
+      questions.push({
+        type: type,
+        id: uuid.v4(),
+        question: "",
+        answer: "",
+      });
+      setAddQuestionModalVisible(false);
+    } else if (type === "image" || type === "audio") {
+      questions.push({
+        type: type,
+        id: uuid.v4(),
+        question: "",
+        answers: {},
+        correctAnswerIndexes: [],
+        fileURL: "",
+      });
+      setAddQuestionModalVisible(false);
+    } else {
+      //TODO: handle error
+    }
   }
 
   async function handleSave() {
@@ -106,11 +156,39 @@ const ProfileScreen = () => {
         name: title,
       });
       questions.map(async (quest) => {
-        await addDoc(collection(questionSetRef, "questions"), {
-          answers: Object.fromEntries(quest.answers),
-          correctAnswerIndexes: quest.correctAnswerIndexes,
-          question: quest.question,
-        });
+        if (quest.type === "multichoice") {
+          await addDoc(collection(questionSetRef, "questions"), {
+            answers: Object.fromEntries(quest.answers),
+            correctAnswerIndexes: quest.correctAnswerIndexes,
+            question: quest.question,
+            type: quest.type,
+          });
+        } else if (quest.type === "flashcard") {
+          await addDoc(collection(questionSetRef, "questions"), {
+            answer: quest.answer,
+            question: quest.question,
+            type: quest.type,
+          });
+        } else if (quest.type === "image" || quest.type === "audio") {
+          const filename = quest.fileURL.split("/").pop();
+          const pathOnFirebase = `question-sets/${questionSetRef.id}/${filename}`;
+
+          const response = await fetch(quest.fileURL);
+          const blob = await response.blob();
+          const storageRef = ref(storage, pathOnFirebase);
+          uploadBytes(storageRef, blob).then((snapshot) => {
+            console.log("Uploaded a blob!");
+          });
+          await addDoc(collection(questionSetRef, "questions"), {
+            answers: Object.fromEntries(quest.answers),
+            correctAnswerIndexes: quest.correctAnswerIndexes,
+            question: quest.question,
+            type: quest.type,
+            fileURL: pathOnFirebase,
+          });
+        } else {
+          //handle unknown type
+        }
       });
       Alert.alert("Successfully added question set to Firebase");
       handleDiscard();
@@ -356,6 +434,28 @@ const ProfileScreen = () => {
                       Add multi-choice question
                     </Text>
                   </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, { width: "80%" }]}
+                    onPress={() => addQuestion("flashcard")}
+                  >
+                    <Text style={{ color: "white" }}>Add flashcard</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, { width: "80%" }]}
+                    onPress={() => addQuestion("image")}
+                  >
+                    <Text style={{ color: "white" }}>
+                      Add question with image
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, { width: "80%" }]}
+                    onPress={() => addQuestion("audio")}
+                  >
+                    <Text style={{ color: "white" }}>
+                      Add question with audio
+                    </Text>
+                  </TouchableOpacity>
                 </TouchableOpacity>
               </TouchableOpacity>
             </View>
@@ -513,6 +613,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "white",
     borderRadius: 20,
+    gap: 10,
   },
   modalIconBackground: {
     position: "absolute",
