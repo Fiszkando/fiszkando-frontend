@@ -17,6 +17,7 @@ import { signOut } from "firebase/auth";
 import { Dimensions } from "react-native";
 import { updatePassword, updateProfile, deleteUser } from "firebase/auth";
 import TitleBanner from "../components/TitleBanner";
+import * as SecureStore from 'expo-secure-store';
 
 const { height } = Dimensions.get("window");
 const backgroundImg = require("../assets/tlo.png");
@@ -47,7 +48,10 @@ const ProfileScreen = () => {
 
   const handleSignOut = () => {
     signOut(auth)
-      .then(() => {})
+      .then(async () => {
+        await SecureStore.deleteItemAsync('email');
+        await SecureStore.deleteItemAsync('password');
+      })
       .catch((error) => {
         Alert.alert(error.message);
       });

@@ -426,7 +426,7 @@ const ProfileScreen = () => {
                     <Image
                       source={plusIcon}
                       style={{
-                        transform: "rotate(45deg)",
+                        transform: [{rotate: '45deg'}],
                         width: 20,
                         height: 20,
                       }}

@@ -6,6 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { useCallback } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
+import * as SecureStore from 'expo-secure-store';
+
 SplashScreen.preventAutoHideAsync();
 
 const LoginScreen = () => {
@@ -16,7 +18,35 @@ const LoginScreen = () => {
     'Harlow-Solid-Italic': require('../assets/fonts/HARLOWSI.ttf'),
   });
 
+  const handleLogin = () => {
+    signInWithEmailAndPassword(auth, email, password)
+    .then(async userCredentials => {
+      const user = userCredentials.user;
+      console.log('Logged in with email: ', user.email);
+
+      await SecureStore.setItemAsync('email', email);
+      await SecureStore.setItemAsync('password', password);
+      console.log('Email and password saved in SecureStore')
+    })
+    .catch(error => {
+      alert(error.message);
+    })
+  }
+
   const onLayoutRootView = useCallback(async () => {
+    let ssEmail = await SecureStore.getItemAsync('email');
+    let ssPassword = await SecureStore.getItemAsync('password');
+
+    if(ssEmail && ssPassword) {
+        signInWithEmailAndPassword(auth, ssEmail, ssPassword)
+        .then(userCredentials => {
+          console.log('Logged in with email: ', userCredentials.user.email);
+        })
+        .catch(() => {
+          console.log('Failed login with secure stored credentials', ssEmail);
+        })
+    }
+
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }
@@ -24,17 +54,6 @@ const LoginScreen = () => {
 
   if (!fontsLoaded) {
     return null;
-  }
-
-  const handleLogin = () => {
-    signInWithEmailAndPassword(auth, email, password)
-    .then(userCredentials => {
-      const user = userCredentials.user;
-      console.log('Logged in with email: ', user.email);
-    })
-    .catch(error => {
-      alert(error.message);
-    })
   }
 
   return (
