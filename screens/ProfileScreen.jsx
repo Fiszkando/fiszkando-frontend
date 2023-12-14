@@ -17,13 +17,27 @@ import { signOut } from "firebase/auth";
 import { Dimensions } from "react-native";
 import { updatePassword, updateProfile, deleteUser } from "firebase/auth";
 import TitleBanner from "../components/TitleBanner";
+import * as SecureStore from 'expo-secure-store';
 
+//ODKOMENTUJ JAK DODASZ APLIKACJE DO SKLEPU
+//import Rate, { AndroidMarket } from 'react-native-rate';
 const { height } = Dimensions.get("window");
 const backgroundImg = require("../assets/tlo.png");
 const saveIcon = require("../assets/diskette.png");
 const deleteIcon = require("../assets/bin.png");
 
 const ProfileScreen = () => {
+
+  //ODKOMENTUJ JAK DODASZ APLIKACJE DO SKLEPU
+  // const rateOptions = {
+  //   GooglePackageName: 'com.fiszkando',
+  //   AppleAppID: '123456789',
+  //   preferredAndroidMarket: AndroidMarket.Google,
+  //   preferInApp: false, 
+  //   openAppStoreIfInAppFails: true,
+  //   fallbackPlatformURL: 'http://www.fiszkando.com',
+  // };
+
   const [discardModalVisible, setDiscardModalVisible] = useState(false);
 
   const [username, setUsername] = useState("");
@@ -47,7 +61,10 @@ const ProfileScreen = () => {
 
   const handleSignOut = () => {
     signOut(auth)
-      .then(() => {})
+      .then(async () => {
+        await SecureStore.deleteItemAsync('email');
+        await SecureStore.deleteItemAsync('password');
+      })
       .catch((error) => {
         Alert.alert(error.message);
       });
@@ -264,6 +281,18 @@ const ProfileScreen = () => {
                     </Text>
                   </View>
                 </View>
+              </View>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  onPress={() => Rate.rate(rateOptions, success => {
+                    if (success) {
+                      //przenosi do strony sklepu
+                    }
+                  })}
+                  style={[styles.button, styles.buttonOutline]}
+                >
+                  <Text style={styles.buttonText}>Rate us!</Text>
+                </TouchableOpacity>
               </View>
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
