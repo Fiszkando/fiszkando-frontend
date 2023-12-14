@@ -134,7 +134,6 @@ const CreatorStep = ({ id = -1, updateFunction, deleteFunction, type }) => {
       quality: 1,
     });
     if (result.canceled === false) {
-      console.log(result.assets[0].uri);
       setPickedFile(result.assets[0]);
       setFileURL(result.assets[0].uri);
       onUpdate({ newFileURL: result.assets[0].uri });

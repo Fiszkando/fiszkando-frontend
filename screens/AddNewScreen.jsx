@@ -115,7 +115,6 @@ const ProfileScreen = () => {
   }
 
   function addQuestion(type) {
-    console.log(type);
     if (type === "multichoice") {
       questions.push({
         type: type,
