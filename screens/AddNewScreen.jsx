@@ -426,6 +426,21 @@ const ProfileScreen = () => {
                   activeOpacity={1}
                 >
                   <TouchableOpacity
+                    style={styles.modalCloseWrapper}
+                    onPress={() => {
+                      setAddQuestionModalVisible(false);
+                    }}
+                  >
+                    <Image
+                      source={plusIcon}
+                      style={{
+                        transform: "rotate(45deg)",
+                        width: 20,
+                        height: 20,
+                      }}
+                    ></Image>
+                  </TouchableOpacity>
+                  <TouchableOpacity
                     style={[styles.button, { width: "80%" }]}
                     onPress={() => addQuestion("multichoice")}
                   >
