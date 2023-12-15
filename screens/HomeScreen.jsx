@@ -34,7 +34,8 @@ const HomeScreen = () => {
     setShowMyList(!showMyList);
   };
 
-  const handleStartQuiz = () => {
+  const handleStartQuiz = (id, name) => {
+    navigation.navigate('Root', { screen: 'StartQuiz', params: { quizId: id, quizName: name } });
   }
 
   useEffect(() => {
@@ -59,11 +60,11 @@ const HomeScreen = () => {
       const favQuizzesList = [];
       for (const setId of favSetsIds) {
         const docRef = doc(db, 'question-sets', setId);
-        
+
         const docSnap = await getDoc(docRef);
         //console.log(docSnap);
         if (docSnap.exists()) {
-          
+
           favQuizzesList.push({ ...docSnap.data(), id: docSnap.id });
         }
       }
@@ -77,11 +78,11 @@ const HomeScreen = () => {
   const renderItem = ({ item }) => {
     const isFavorite = myFavoriteQuizzes.some(favQuiz => favQuiz.id === item.id)
     return (
-      <QuizItem 
-      quiz={item} 
-      onPress={() => handleStartQuiz(item.id)} 
-      isFavorite={isFavorite}
-    />
+      <QuizItem
+        quiz={item}
+        onPress={() => handleStartQuiz(item.id, item.name)}
+        isFavorite={isFavorite}
+      />
     );
   }
 
@@ -89,10 +90,10 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <ImageBackground source={backgroundImg} resizeMode="cover" style={styles.image}>
 
-        
-          <Text style={styles.helloText}>Hello! </Text>
-          <TitleBanner title={userName} />
-        
+
+        <Text style={styles.helloText}>Hello! </Text>
+        <TitleBanner title={userName} />
+
 
         <View style={styles.mainQuizContainer}>
           <TouchableOpacity onPress={toggleFavoriteList}>
