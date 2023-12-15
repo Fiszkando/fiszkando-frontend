@@ -2,7 +2,7 @@ import { ScrollView, ImageBackground, Image, TextInput, StyleSheet, Text, Toucha
 import React, { useState, useEffect } from 'react';
 import { db, auth } from '../firebase';
 import { signOut } from 'firebase/auth';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { query, collection, where, onSnapshot, getDocs } from 'firebase/firestore';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Dimensions } from 'react-native';
 import TitleBanner from "../components/TitleBanner";
@@ -12,22 +12,43 @@ const backgroundImg = require('../assets/tlo.png');
 
 const StartQuizScreen = () => {
 
-    const [flashcards, setFlashcards] = useState('1');
+    const [flashcards, setFlashcards] = useState('4');
     const [repeats, setRepeats] = useState('1');
     const [mins, setMins] = useState('');
+    const [maxFlashcards, setMaxFlashcards] = useState('4');
+    const [questions, setQuestions] = useState('');
 
     const navigation = useNavigation();
     const route = useRoute();
     const { quizId, quizName } = route.params;
 
-    const maxFlashcards = 1; //TODO
+    useEffect(() => {
+        const questionsQuery = query(collection(db, 'question-sets', quizId, 'questions'));
+        const getQuestions = async () => {
+            try {
+                setQuestions(await getDocs(questionsQuery));
+                const questionsLength = questions.size;
+                /* przykład wywołania do iteracji każdego elementu
+                questions.forEach((doc) => {
+                    console.log('Dane pytania:', doc.data());
+                    console.log(doc.data().type);
+                  }); 
+                */
+                setMaxFlashcards(questionsLength);
+                setFlashcards(questionsLength);
+            } catch (error) {
+                console.error('Błąd podczas pobierania danych:', error);
+            }
+        };
+        getQuestions();
+    }, [quizId]);
 
     const handleExit = () => {
         navigation.navigate('Home');
     }
 
     const handleStart = () => {
-        navigation.navigate('Root', { screen: 'Quiz', params: { quizId: quizId, quizName: quizName } });
+        navigation.navigate('Root', { screen: 'Quiz', params: { quizId: quizId, quizName: quizName, flashcards: flashcards, ctr: 0, questions: questions } });
     }
 
     return (
@@ -133,18 +154,18 @@ const styles = StyleSheet.create({
         borderWidth: 10,
         borderColor: 'white',
         borderRadius: 33,
-      },
-      text: {
+    },
+    text: {
         fontSize: 16,
         marginBottom: 5,
         marginTop: 5,
-      },
-      input: {
+    },
+    input: {
         height: 40,
         borderColor: 'gray',
         borderWidth: 1,
         padding: 5,
         marginBottom: 10,
         borderRadius: 10,
-      },
+    },
 })
