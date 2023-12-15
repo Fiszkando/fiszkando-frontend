@@ -2,7 +2,7 @@ import { ScrollView, ImageBackground, Image, TextInput, StyleSheet, Text, Toucha
 import React, { useState, useEffect } from 'react';
 import { db, auth } from '../firebase';
 import { signOut } from 'firebase/auth';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { query, collection, onSnapshot, getDocs } from 'firebase/firestore';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Dimensions } from 'react-native';
 import TitleBanner from "../components/TitleBanner";
@@ -12,30 +12,21 @@ const backgroundImg = require('../assets/tlo.png');
 
 const StartQuizScreen = () => {
 
-    const [flashcards, setFlashcards] = useState('1');
+    const [flashcards, setFlashcards] = useState('4');
     const [repeats, setRepeats] = useState('1');
     const [mins, setMins] = useState('');
+    const [maxFlashcards, setMaxFlashcards] = useState('4');
 
     const navigation = useNavigation();
     const route = useRoute();
     const { quizId, quizName } = route.params;
-
-    const maxFlashcards = 1; //TODO
-
-    const handleSignOut = () => {
-        signOut(auth)
-            .then(() => { })
-            .catch(error => {
-                alert(error.message);
-            })
-    }
 
     const handleExit = () => {
         navigation.navigate('Home');
     }
 
     const handleStart = () => {
-        navigation.navigate('Root', { screen: 'Quiz', params: { quizId: quizId, quizName: quizName } });
+        navigation.navigate('Root', { screen: 'Quiz', params: { quizId: quizId, quizName: quizName, flashcards: flashcards, ctr: 0 } });
     }
 
     return (
@@ -56,7 +47,7 @@ const StartQuizScreen = () => {
 
                 <View style={styles.container}>
                     <View style={styles.rectangle}>
-                        <Text style={styles.text}>Flashcards to use (max. {maxFlashcards})</Text>
+                        <Text style={styles.text}>Flashcards to use (max. { maxFlashcards })</Text>
                         <TextInput
                             style={styles.input}
                             value={flashcards}
@@ -125,8 +116,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-      },
-      rectangle: {
+    },
+    rectangle: {
         width: 300,
         height: 300,
         backgroundColor: 'white',
@@ -136,18 +127,18 @@ const styles = StyleSheet.create({
         borderWidth: 10,
         borderColor: 'white',
         borderRadius: 33,
-      },
-      text: {
+    },
+    text: {
         fontSize: 16,
         marginBottom: 5,
         marginTop: 5,
-      },
-      input: {
+    },
+    input: {
         height: 40,
         borderColor: 'gray',
         borderWidth: 1,
         padding: 5,
         marginBottom: 10,
         borderRadius: 10,
-      },
+    },
 })
