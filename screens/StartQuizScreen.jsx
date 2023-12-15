@@ -2,7 +2,7 @@ import { ScrollView, ImageBackground, Image, TextInput, StyleSheet, Text, Toucha
 import React, { useState, useEffect } from 'react';
 import { db, auth } from '../firebase';
 import { signOut } from 'firebase/auth';
-import { query, collection, onSnapshot, getDocs } from 'firebase/firestore';
+import { query, collection, where, onSnapshot, getDocs } from 'firebase/firestore';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Dimensions } from 'react-native';
 import TitleBanner from "../components/TitleBanner";
@@ -16,17 +16,39 @@ const StartQuizScreen = () => {
     const [repeats, setRepeats] = useState('1');
     const [mins, setMins] = useState('');
     const [maxFlashcards, setMaxFlashcards] = useState('4');
+    const [questions, setQuestions] = useState('');
 
     const navigation = useNavigation();
     const route = useRoute();
     const { quizId, quizName } = route.params;
+
+    useEffect(() => {
+        const questionsQuery = query(collection(db, 'question-sets', quizId, 'questions'));
+        const getQuestions = async () => {
+            try {
+                setQuestions(await getDocs(questionsQuery));
+                const questionsLength = questions.size;
+                /* przykład wywołania do iteracji każdego elementu
+                questions.forEach((doc) => {
+                    console.log('Dane pytania:', doc.data());
+                    console.log(doc.data().type);
+                  }); 
+                */
+                setMaxFlashcards(questionsLength);
+                setFlashcards(questionsLength);
+            } catch (error) {
+                console.error('Błąd podczas pobierania danych:', error);
+            }
+        };
+        getQuestions();
+    }, [quizId]);
 
     const handleExit = () => {
         navigation.navigate('Home');
     }
 
     const handleStart = () => {
-        navigation.navigate('Root', { screen: 'Quiz', params: { quizId: quizId, quizName: quizName, flashcards: flashcards, ctr: 0 } });
+        navigation.navigate('Root', { screen: 'Quiz', params: { quizId: quizId, quizName: quizName, flashcards: flashcards, ctr: 0, questions: questions } });
     }
 
     return (
@@ -47,7 +69,7 @@ const StartQuizScreen = () => {
 
                 <View style={styles.container}>
                     <View style={styles.rectangle}>
-                        <Text style={styles.text}>Flashcards to use (max. { maxFlashcards })</Text>
+                        <Text style={styles.text}>Flashcards to use (max. {maxFlashcards})</Text>
                         <TextInput
                             style={styles.input}
                             value={flashcards}
