@@ -22,14 +22,6 @@ const StartQuizScreen = () => {
 
     const maxFlashcards = 1; //TODO
 
-    const handleSignOut = () => {
-        signOut(auth)
-            .then(() => { })
-            .catch(error => {
-                alert(error.message);
-            })
-    }
-
     const handleExit = () => {
         navigation.navigate('Home');
     }
@@ -85,7 +77,12 @@ const StartQuizScreen = () => {
                     style={[
                         styles.button,
                         styles.buttonOutline,
-                        { position: "absolute", top: 750, left: 150, borderWidth: 0 },
+                        {
+                            marginLeft: 'auto',
+                            marginRight: 'auto',
+                            marginBottom: 30,
+                            borderWidth: 0
+                        }
                     ]}
                 >
                     <Text style={styles.buttonText}>Start</Text>
@@ -127,10 +124,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
       },
       rectangle: {
-        width: 300,
+        //width: '70%',
         height: 300,
         backgroundColor: 'white',
-        marginHorizontal: 70,
+        marginHorizontal: '10%',
         marginVertical: 20,
         padding: 10,
         borderWidth: 10,

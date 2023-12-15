@@ -11,21 +11,11 @@ const { height, width } = Dimensions.get('window');
 const backgroundImg = require('../assets/tlo.png');
 
 const QuizScreen = () => {
-
     const navigation = useNavigation();
-
-    const handleSignOut = () => {
-        signOut(auth)
-            .then(() => { })
-            .catch(error => {
-                alert(error.message);
-            })
-    }
 
     const handleExit = () => {
         navigation.navigate('Home');
     }
-
 
     return (
         <View style={styles.container}>
