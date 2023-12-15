@@ -190,7 +190,7 @@ const QuizScreen = () => {
             </Text>
           </View>
         )}
-        <TitleBanner title="quiz" />
+        <TitleBanner title={ quizName } />
         <View style={styles.container}>
           <ScrollView style={styles.content}>
             <TouchableOpacity style={styles.questionContainer} disabled>
